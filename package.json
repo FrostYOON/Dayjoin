@@ -1,0 +1,34 @@
+{
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.24.0",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@11.24.0",
+  "type": "module",
+  "name": "dayjoin",
+  "private": true,
+  "engines": {
+    "node": "24.x",
+    "pnpm": "11.24.0"
+  },
+  "scripts": {
+    "dev:api": "pnpm --filter api start:dev",
+    "dev:web": "pnpm --filter web dev",
+    "build": "pnpm db:generate && pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm --filter api test",
+    "test:e2e": "pnpm --filter api test:e2e",
+    "db:generate": "pnpm --filter api exec prisma generate",
+    "db:validate": "pnpm --filter api exec prisma validate",
+    "db:migrate:dev": "pnpm --filter api exec prisma migrate dev",
+    "db:migrate:deploy": "pnpm --filter api exec prisma migrate deploy",
+    "infra:up": "docker compose up -d --wait postgres",
+    "infra:cache": "docker compose --profile cache up -d --wait postgres redis",
+    "infra:down": "docker compose --profile cache --profile app down",
+    "test:integration": "node scripts/smoke.mjs"
+  }
+}

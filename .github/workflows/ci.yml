@@ -1,0 +1,46 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: pnpm/setup@479c3cd2084b8e20207344a47dc10bdabea95adb # v3
+        with:
+          node-version-file: .nvmrc
+          require-lockfile: true
+      - name: Local test environment
+        run: cp apps/api/.env.example apps/api/.env
+      - run: pnpm db:generate
+      - run: pnpm db:validate
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm test:e2e
+      - run: pnpm build
+      - name: Start local dependencies
+        run: docker compose --profile cache up -d --wait postgres redis
+      - name: Integration with Redis disabled
+        run: pnpm test:integration
+      - name: Integration with Redis enabled
+        run: pnpm test:integration
+        env:
+          REDIS_ENABLED: "true"
+      - name: Build and run the API image
+        run: docker compose --profile cache --profile app up -d --build --wait
+        env:
+          REDIS_ENABLED: "true"
+      - name: Stop test containers
+        if: always()
+        run: docker compose --profile cache --profile app down

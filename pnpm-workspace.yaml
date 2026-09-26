@@ -1,0 +1,9 @@
+packages:
+  - 'apps/*'
+saveExact: true
+engineStrict: true
+storeDir: .pnpm-store
+cacheDir: .pnpm-cache
+allowBuilds:
+  '@prisma/engines': true
+  prisma: true

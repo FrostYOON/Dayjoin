@@ -1,0 +1,17 @@
+**/node_modules
+**/dist
+**/coverage
+**/.env
+**/.env.*
+**/.git
+**/.pnpm-store
+**/.pnpm-cache
+docs
+work
+outputs
+**/.claude
+**/.windsurf
+**/.agents
+**/skills-lock.json
+**/*.tsbuildinfo
+**/src/generated
