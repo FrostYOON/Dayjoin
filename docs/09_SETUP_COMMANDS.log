@@ -732,3 +732,16 @@ pnpm build
 # identified for the documented in-memory demo; not an auth/security certification.
 # Runtime DB/Redis used in the separate fix worktree was stopped after tests,
 # preserving volumes. Existing web dev server remains available.
+# 2026-09-27 — dev 통합 및 개발 도구 감사 확대
+# PR #2 (def0ff7) / PR #1 (a000809): 각 최신 CI 성공 확인 후 dev 병합.
+# UI CI: https://github.com/FrostYOON/Dayjoin/actions/runs/36296639003
+# dev merge: d809883; main: 05cf626 유지.
+# git switch -c fix/development-tool-audit
+# pnpm view @nestjs/mau version dependencies --json
+# rg 사용 경로 확인: package.json 이외 앱/scripts/CI에서 사용하지 않음.
+# pnpm --filter api remove @nestjs/mau
+# pnpm audit: 성공, 전체 0건 (기존 Mau 경로 17건 제거).
+# pnpm lint / pnpm typecheck: 성공.
+# pnpm test: API 6 + web 26 성공.
+# pnpm test:e2e: HTTP 계약 5 성공.
+# pnpm build: Prisma generate + API/web 성공, 기존 500 kB 청크 경고 유지.
