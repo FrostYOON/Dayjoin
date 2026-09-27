@@ -1,4 +1,4 @@
-# Prisma 전이 의존성 보안 보완
+# 의존성 보안 보완
 
 확인일: 2026-09-27. 사용자 진행 승인에 따라 dev에서 `fix/prisma-transitive-security`를 분기했다. 실행 중인 UI 개발 서버를 보존하기 위해 별도 관리형 worktree에서 작업했다.
 
@@ -25,3 +25,14 @@
 8. 테스트용 .env.example 복사 후 `docker compose --profile cache up -d --wait postgres redis`, `pnpm test:integration`, `REDIS_ENABLED=true pnpm test:integration` 통과. 실제 PostgreSQL SELECT 1, Redis 비활성/활성, liveness/security header를 확인했다. 기존 데이터 볼륨은 보존한다.
 
 schema 변경이나 업무 모델 추가는 없으므로 migration을 생성하지 않았다. API 컨테이너 이미지는 PR CI에서 별도 빌드/실행 결과를 확인한다. 인증·RLS·금융 원장은 여전히 미구현이다.
+
+## 개발 도구 감사 확대 · 2026-09-27
+
+Prisma 수정 PR #2와 UI PR #1을 각 최신 CI 성공 후 dev에 병합했다. UI 결합 커밋 `a000809`의 [CI](https://github.com/FrostYOON/Dayjoin/actions/runs/36296639003)는 감사·단위/HTTP·DB/Redis·API 이미지 검사를 모두 통과했다.
+
+모바일 도구를 확인하는 과정에서 운영 의존성에 한정하지 않은 전체 감사를 실행했다. 기존 `@nestjs/mau@0.2.8` 경로에 undici/tmp 권고 17건(높음 5, 보통 8, 낮음 4)이 있었다. [Nest 배포 문서](https://docs.nestjs.com/deployment)의 Mau는 선택적인 클라우드 배포 도구이며, 저장소의 scripts·CI·Dockerfile·앱 코드에서 사용하지 않는다. 현재 안정판도 undici 6.20.1/inquirer 8.2.6을 고정한다. 불필요한 override를 늘리는 대신 `fix/development-tool-audit`에서 **사용하지 않는 직접 devDependency를 제거**했다. Nest의 build/start/schematics/testing 도구는 유지한다.
+
+- `pnpm view @nestjs/mau version dependencies --json`, 사용 경로 `rg` 확인 후 `pnpm --filter api remove @nestjs/mau` 실행. package.json/lockfile은 공식 CLI가 갱신했다.
+- `pnpm audit` 통과: 개발 도구를 포함해 0건. CI도 `pnpm audit --prod`에서 `pnpm audit`으로 확대했다. 감사 예외는 없다.
+- 전체 lint/typecheck, API 단위 6개·웹 26개·HTTP 계약 5개, Prisma generate와 API/웹 build 통과. 웹 청크 582.11 kB 경고는 기존과 같다.
+- Capacitor 추가 브랜치에서 발견한 uuid 권고와 네이티브 실행 검증은 앱 작업에서 별도로 처리한다. 이 브랜치에는 Capacitor가 없다.
