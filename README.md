@@ -1,8 +1,8 @@
 # Dayjoin · 데이조인
 
-함께 쓰는 일정을 한곳에 모으고, 변경된 약속을 확인하는 공유 캘린더.
+일정과 가계부를 한 캘린더에서 관리하고, 선택한 기록을 함께 보는 서비스.
 
-**현재 상태: 기반 구현 + 계획 v0.3 / 2026-09-26.** 공식 CLI로 React/Vite와 NestJS를 생성하고 PostgreSQL/선택적 Redis, health API, Dockerfile/Compose, CI workflow를 구성했다. Git 기본 브랜치는 `main`이며 원격 저장소는 [FrostYOON/Dayjoin](https://github.com/FrostYOON/Dayjoin)이다. 캘린더 화면·로그인·테넌트 권한·업무 모델과 클라우드 배포는 아직 없다.
+**현재 상태: 기반 구현 + React 통합 화면(가상 데이터) / 2026-09-27.** 공식 CLI로 React/Vite와 NestJS를 생성하고 PostgreSQL/선택적 Redis, health API, Dockerfile/Compose, CI workflow를 구성했다. Git 기본 브랜치는 `main`이며 원격 저장소는 [FrostYOON/Dayjoin](https://github.com/FrostYOON/Dayjoin)이다. 달력 중심의 반응형 화면과 가상 일정·가계부가 동작한다. 로그인·테넌트 권한·영속 업무 모델·앱 패키징과 클라우드 배포는 아직 없다.
 
 사용자 확정 조건은 **한국 우선, 1인 개발, TypeScript·NestJS 사용 경험이 가장 많고 Python은 조금 사용, 프론트엔드 경험 없음, 주 약 10시간, 초기 비용 최소화, 장기 수익화, 세 서비스 독립 개발**이다. React + Vite / NestJS 및 공식 CLI 중심 개발은 확정이다. 호스팅·일정·가격은 추천안/추정치다.
 
@@ -16,9 +16,13 @@
 | 6 | [결정·인계 기록](docs/06_DECISIONS.md) | 확정 사항, 추천안, 남은 결정, 다음 작업 |
 | 참고 | [공식 근거](docs/07_SOURCES.md) | 2026-09-26 확인한 기술/요금 출처 |
 
-다음 제품 작업: **D-001: 첫 사용자와 함께 일정 하나를 공유하는 흐름을 구체화한다**. 기반 검증 이후 해당 작업과 인증·권한 설계를 진행한다. 백로그의 체크박스는 완료 전까지 비워 둔다. 문서 생성과 앱 개발 완료를 구분한다.
+첫 사용 대상은 가족·커플이며 우선 사례는 저녁식사·여행이다. 사용자가 **계좌·카드·이체를 포함한 가계부와 기록별 개인/공유**로 범위를 넓혔다. [통합 가계부 설계안](docs/13_CALENDAR_RECORDS_PROPOSAL.md)을 바탕으로 [F-001 통합 시안과 가상 동작 확인](docs/14_UNIFIED_SCREEN_PREVIEW.md)을 완료했다. 이어서 **[F-002 React 가상 데이터 화면](docs/16_REACT_UI_IMPLEMENTATION.md)**을 구현했다. 다음은 P-010 앱 기기 적합성 확인이며, 실제 금융 원장·서버 저장·공유는 인증·권한 기반 이후 연결한다. 기존 일정 전용 공수는 재산정한다.
 
-세 서비스 계획은 모두 준비하되 구현은 Dayjoin → Cashjoin → Workjoin 순서가 기본 추천이다. 먼저 한 서비스의 실제 사용 결과를 보고 다음 서비스 착수 시점을 조정한다. ERP 고객을 이미 확보한다면 Workjoin 순서를 앞당길 수 있다.
+현재는 Dayjoin의 통합 제품에 집중한다. Cashjoin의 금융 계산·원장 기획을 참고하되 다른 저장소·DB·Auth·배포의 병합이나 중단은 결정하지 않았다. 서비스 간 독립 원칙을 유지하며 중복되는 제품 역할은 별도 전략 결정으로 남긴다.
+
+플랫폼은 **모바일 앱 + 웹**으로 확장한다. 모바일은 월간 달력과 선택일 내역, PC 웹은 넓은 달력과 옆의 상세 영역을 기준으로 한다. [앱·웹 계획](docs/15_APP_AND_WEB_PLAN.md)의 초기 추천은 기존 React/Vite + Capacitor이며 네이티브 프로젝트와 앱 배포는 아직 없다.
+
+브랜치는 `main`(릴리스) → `dev`(통합) → 작업별 `feature/*`·`fix/*`·`docs/*`로 운영한다. 작업 PR은 dev로 모으고 병합은 별도로 진행한다. [브랜치 규칙](docs/19_GIT_WORKFLOW.md)을 따른다.
 
 개발 시 [AGENTS.md](AGENTS.md)와 [공식 문서 기반 개발 기준](docs/08_ENGINEERING_STANDARD.md)을 먼저 따른다.
 
@@ -50,7 +54,7 @@ pnpm dev:web
 ```
 
 Vite: http://localhost:5173 · API: http://localhost:3000/api/v1/health/ready.
-웹은 아직 Vite의 React 예제 화면이다. 캘린더 UI는 다음 단계다. 개발 프록시로 /api 요청이 Nest에 전달된다.
+웹은 Dayjoin 달력·일정/가계부 등록·계좌/카드·월 합계를 제공한다. **웹 화면만 체험할 때는 설치 후 `pnpm dev:web`만 실행하면 된다.** API/Docker 없이 가상 데이터가 동작하며 새로고침하면 초기화된다. 상단 프로필에서 사용자 관점·화면 밝기·오류 상태를 비교할 수 있다. 화면 밝기는 기본적으로 시스템 설정을 따르며, 선택한 테마는 이 브라우저의 다음 방문에도 유지된다. 기록 데이터 저장과는 별도이며 [최신 테마·검증 기록](docs/20_THEME_AND_UI_CHECKPOINT.md)을 참고한다. 개발 프록시로 /api 요청이 Nest에 전달되지만 제품 UI는 아직 API를 호출하지 않는다.
 
 Redis 연결도 확인하려면:
 
@@ -84,7 +88,7 @@ REDIS_ENABLED=true pnpm test:integration
 docker compose --profile cache --profile app config --quiet
 ```
 
-test는 환경 설정 단위 검사, test:e2e는 의존성을 대체한 HTTP 계약 검사, test:integration은 실제 DB/Redis와 빌드된 API를 실행한다. 통합 검사는 임시 3300 포트를 사용한다. 제품 브라우저 E2E와 권한/RLS/migration 검사는 아직 없다.
+test는 API 환경 설정 단위 검사와 웹 금액·날짜·공개 표시 검사, test:e2e는 의존성을 대체한 HTTP 계약 검사, test:integration은 실제 DB/Redis와 빌드된 API를 실행한다. 통합 검사는 임시 3300 포트를 사용한다. 제품 브라우저 E2E와 권한/RLS/migration 검사는 아직 없다.
 
 개발 서버는 해당 터미널에서 Ctrl+C, 컨테이너는 다음 명령으로 종료한다.
 
@@ -102,4 +106,4 @@ GitHub Actions 파일은 .github/workflows/ci.yml에 준비했다. `main` 푸시
 
 ## 새 채팅에서 이어가기
 
-세 프로젝트 모두 기초 세팅까지만 완료했다. 이후 기능 개발은 각 프로젝트의 새 채팅에서 하나씩 진행한다. [새 채팅 인계](docs/11_CHAT_HANDOFF.md)에 사용자 조건·완료 상태·다음 작업 후보를 정리했다.
+세 프로젝트 기초 세팅 후 이 채팅에서 Dayjoin 화면 설계와 React 가상 화면까지 진행했다. 실제 서버 제품 기능과 앱 패키징은 후속 작업이다. [새 채팅 인계](docs/11_CHAT_HANDOFF.md)에 사용자 조건·완료 상태·다음 작업 후보를 정리했다.
