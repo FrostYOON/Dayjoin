@@ -7,3 +7,6 @@ cacheDir: .pnpm-cache
 allowBuilds:
   '@prisma/engines': true
   prisma: true
+overrides:
+  '@prisma/config@7.10.0>deepmerge-ts': 8.0.0
+  prisma@7.10.0>mysql2: 3.23.1
