@@ -710,3 +710,25 @@ pnpm --filter web lint && pnpm --filter web typecheck && pnpm --filter web build
 # Screenshot /private/tmp/dayjoin-system-theme.png. Actual OS toggling, mobile
 # hardware, blocked storage and first-paint flash were not tested.
 # No local DB/Redis smoke repeated; PR CI will run those and API container checks.
+
+# 2026-09-27 reviewed UI integration after separate security fix
+# Security fix command/failure/test details are in docs/21_DEPENDENCY_SECURITY.md.
+# PR #2 head def0ff7 passed CI 36296440566 including audit, DB/Redis and container.
+gh pr merge 2 --repo FrostYOON/Dayjoin --merge --match-head-commit def0ff7be20f1267ea43a24311c092bcca67f31b
+# exit=0, dev merge 0aada8c. No branch deletion and main unchanged.
+git fetch origin
+git merge --no-edit origin/dev
+# exit=0 on feature/calendar-ledger-ui; workflow/lockfile merged without conflict.
+pnpm install --frozen-lockfile
+pnpm audit --prod
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm test:e2e
+pnpm build
+# exit=0 each. Audit 0; API 6, web 26, HTTP 5. Final web chunk warning unchanged.
+# Read UI form/error handling, visibility projection, balances/refunds, calendar
+# keyboard paths, modal/dropdown lifecycle and existing coverage. No new blocker
+# identified for the documented in-memory demo; not an auth/security certification.
+# Runtime DB/Redis used in the separate fix worktree was stopped after tests,
+# preserving volumes. Existing web dev server remains available.

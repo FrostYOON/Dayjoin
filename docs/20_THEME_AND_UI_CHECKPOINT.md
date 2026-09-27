@@ -33,3 +33,7 @@
 | Prisma CLI → mysql2 | 3.15.3 | [압축 응답 해제 시 자원 소진](https://github.com/advisories/GHSA-rgwj-5xj2-c3m3), >=3.23.1 |
 
 현재 API는 PostgreSQL adapter-pg를 사용하며 MySQL 연결을 구현하지 않았다. deepmerge-ts는 Prisma 설정의 전이 의존성이다. 이 맥락은 위험 평가 자료이며 취약성 해소나 운영 안전성을 보장하지 않는다. Prisma 업데이트/전이 의존성 호환성과 컨테이너 포함 범위를 별도 `fix/*`에서 검증한다. 이번 UI 저장에 무조건적인 major override나 audit 예외를 추가하지 않았다. 병합/운영 전 보완 항목으로 유지한다.
+
+### 후속 해결 · 2026-09-27
+
+[보안 PR #2](https://github.com/FrostYOON/Dayjoin/pull/2)가 dev에 병합됐다. 부모/버전을 한정한 override로 패치 버전을 적용했으며, [검증 기록](21_DEPENDENCY_SECURITY.md)과 [CI](https://github.com/FrostYOON/Dayjoin/actions/runs/36296440566)에서 감사·Prisma·DB/Redis·컨테이너 검사를 통과했다. UI 브랜치에도 dev를 병합한 뒤 frozen-lockfile 설치, 배포 의존성 감사 0건, 전체 lint/typecheck, API 6개·웹 26개·HTTP 5개, 전체 빌드를 다시 확인했다. 위 3건은 최초 발견 당시 기록이며 현재 미해결 권고로 중복 집계하지 않는다. 웹 청크 경고와 네이티브 실행 미검증은 남아 있다.

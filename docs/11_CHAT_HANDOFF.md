@@ -28,6 +28,7 @@ Dayjoin은 일정과 계좌·카드·이체를 포함한 가계부를 한 캘린
 12. 18_DROPDOWN_UI.md — Radix Select 공통 선택 메뉴, 네이티브 모달 호환, 브라우저 검증과 번들 비용.
 13. 19_GIT_WORKFLOW.md — main/dev/작업별 브랜치와 PR 운영.
 14. 20_THEME_AND_UI_CHECKPOINT.md — 시스템 테마·설정 저장, 최신 검증, 기존 의존성 보안 권고.
+15. 21_DEPENDENCY_SECURITY.md — 보안 권고 3건 해결, 제한된 overrides와 실제 DB/Redis 검증.
 
 ## 미완료 범위
 웹은 F-002의 React 달력·일정/가계부·계좌·카드·월 합계 화면이다. 예시 데이터만 메모리에 저장하며 새로고침하면 초기화된다. 업무 모델/migration/RLS, 로그인/JWT·초대·업무 권한, 도메인 기능·결제와 클라우드 배포는 없다. GitHub CI 통과 여부는 해당 커밋의 실행 결과로 판단한다.
