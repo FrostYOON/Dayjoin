@@ -20,7 +20,7 @@
     "build": "pnpm db:generate && pnpm -r build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm --filter api test",
+    "test": "pnpm --filter api test && pnpm --filter web test",
     "test:e2e": "pnpm --filter api test:e2e",
     "db:generate": "pnpm --filter api exec prisma generate",
     "db:validate": "pnpm --filter api exec prisma validate",

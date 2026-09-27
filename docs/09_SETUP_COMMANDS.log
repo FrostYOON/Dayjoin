@@ -286,3 +286,449 @@ git diff --cached --check
 # Preserve third-party skill content and its skills-lock.json hashes.
 git diff --cached --check -- . ':(exclude)apps/api/.agents/skills/**'
 # exit=0: project source, configuration and documentation passed.
+
+# 2026-09-26 D-002 screen flow design
+# Scope: product planning documents and a conversation-only interactive wireframe.
+# No app source/dependency/schema changes. No install, build, migration or app tests.
+node --version
+# exit=0: v24.20.0
+python3 --version
+# exit=0: Python 3.14.3
+# Read installed apps/web package metadata with Node:
+# react 19.3.0, vite 8.3.1, typescript 6.0.3.
+# Official UI references and project decisions are recorded in 12_SCREEN_FLOWS.md.
+python3 /Users/yoon-yongseol/.codex/plugins/cache/openai-bundled/visualize/1.0.41/skills/visualize/scripts/render.py --help
+# exit=0: verified --serve and --port options.
+python3 /Users/yoon-yongseol/.codex/plugins/cache/openai-bundled/visualize/1.0.41/skills/visualize/scripts/render.py /Users/yoon-yongseol/.codex/visualizations/2026/09/26/01a0df1d-8130-76b3-bf5c-6ee28cae1bd6/dayjoin-d002.html --serve --port 5186
+# First attempt exit=2: sandbox denied local port binding.
+# Retried with approval; preview served at 127.0.0.1:5186.
+# Restarted after correcting preview state restoration and sandboxed form handling.
+# Browser checks: edit travel; retain input after save failure; retry succeeds;
+# title/date validation; personal/shared separation; invite and acceptance states;
+# viewer has no shared add/save actions. All use simulated in-memory data.
+# Layout: 28 screen/state combinations across 320, 360 and 736 px; no horizontal
+# overflow or controls outside the product surface. Final console error list empty.
+# node --check, with the extracted inline script supplied on stdin: exit=0.
+git diff --check
+# exit=0.
+# Python local Markdown link/new-document whitespace checks: exit=0.
+# Previously existing D-001 document edits were preserved and extended.
+
+# 2026-09-26 D-002 warm UI revision
+# User preference: soft warm colors and rounded surfaces; green is not required.
+# Scope: conversation mockup and design/handoff records. Existing edits preserved.
+node -e 'for (const p of ["react","vite","typescript"]) console.log(p,require("./apps/web/node_modules/"+p+"/package.json").version)'
+# exit=0: react 19.3.0, vite 8.3.1, typescript 6.0.3.
+# Primary design references: Linear 2026-03-12 refresh and Notion Calendar;
+# URLs and separation of reference/user choice/project proposal in 12_SCREEN_FLOWS.md.
+python3 /Users/yoon-yongseol/.codex/plugins/cache/openai-bundled/visualize/1.0.41/skills/visualize/scripts/render.py /Users/yoon-yongseol/.codex/visualizations/2026/09/26/01a0df1d-8130-76b3-bf5c-6ee28cae1bd6/dayjoin-d002.html --serve --port 5186
+# First attempt exit=2: sandbox denied local port binding; approved retry served.
+# Dark UI: 28 screen/state combinations at 320/360/736 px passed width checks.
+# Travel form retains dates/title/memo; failed save preserves edit; retry updates list.
+cp /Users/yoon-yongseol/.codex/visualizations/2026/09/26/01a0df1d-8130-76b3-bf5c-6ee28cae1bd6/dayjoin-d002.html /private/tmp/dayjoin-d002-light-check.html
+# exit=0. Test-only copy forces light color-scheme; original still follows system.
+python3 /Users/yoon-yongseol/.codex/plugins/cache/openai-bundled/visualize/1.0.41/skills/visualize/scripts/render.py /private/tmp/dayjoin-d002-light-check.html --serve --port 5186
+# Restarted after initial saved widget state restored dark mode. Forced light only
+# in test copy: 8 normal screen combinations at 320/360 px passed width checks.
+# Viewed light list/form screenshots; viewer invite acceptance hides shared add/save
+# and disables title input. Browser console error list empty.
+# Host Tweak controls themselves were not interactively verified by this renderer.
+# Python read-back checks: fragment <1 MB (27,525 bytes), no outer document tags or
+# network API calls; node --check via extracted script stdin: exit=0.
+# Local Markdown links and whitespace: passed.
+git diff --check
+# exit=0. No app build, dependency install, migration, commit or push in this revision.
+
+# 2026-09-26 unified calendar record proposal
+# User proposed schedule/ledger choice, per-record private/shared visibility and colors.
+# Read Dayjoin PRD/decisions/handoff and existing Cashjoin scope from prior turn.
+# Checked W3C WCAG 2.2 Use of Color and OWASP Authorization official guidance.
+# Added 13_CALENDAR_RECORDS_PROPOSAL.md and linked it from PRD/decisions/handoff.
+# Proposal only: no mockup/app/schema/dependency changes, no Cashjoin mutation.
+# Python local link/whitespace checks on four design documents: exit=0.
+git diff --check
+# exit=0. No install, build, migration, app tests, commit or push.
+
+# 2026-09-26 expand Dayjoin ledger scope to accounts, cards and transfers
+# User extended the unified product beyond simple income/expense recording.
+# Read existing Cashjoin financial/ledger design; did not modify that repository.
+# Checked GnuCash 5 official charge/payment guidance and PostgreSQL 18 transactions.
+# Sources and project decisions are recorded in 13_CALENDAR_RECORDS_PROPOSAL.md.
+# Updated Dayjoin PRD DJ-F01~08, backlog F-001~060, architecture scope, README,
+# decisions ADR-D08 and handoff. Previous schedule-only estimates are superseded
+# for the expanded scope; no replacement time estimate was invented.
+# Numeric rows are acceptance examples, not a passed ledger implementation test.
+# Python checked 8 changed Markdown files for local links/trailing whitespace: exit=0.
+git diff --check
+# exit=0. Documentation only; no UI/API/schema/dependency changes, app tests,
+# install, build, migration, repository merge, commit or push.
+
+# 2026-09-26 F-001 unified interactive screen preview
+# Scope: calendar, account/card ledger and monthly summary conversation mockup.
+# Existing D-002 artifact and prior document edits preserved; app source unchanged.
+node -e 'for (const p of ["react","vite","typescript"]) console.log(p,require("./apps/web/node_modules/"+p+"/package.json").version)'
+# exit=0: react 19.3.0, vite 8.3.1, typescript 6.0.3.
+# Existing official reference/version findings are linked from 13_CALENDAR_RECORDS_PROPOSAL.md.
+python3 /Users/yoon-yongseol/.codex/plugins/cache/openai-bundled/visualize/1.0.41/skills/visualize/scripts/render.py /Users/yoon-yongseol/.codex/visualizations/2026/09/26/01a0df1d-8130-76b3-bf5c-6ee28cae1bd6/dayjoin-unified.html --serve --port 5186
+# Approved local binding; restarted preview after source corrections.
+cp /Users/yoon-yongseol/.codex/visualizations/2026/09/26/01a0df1d-8130-76b3-bf5c-6ee28cae1bd6/dayjoin-unified.html /private/tmp/dayjoin-unified-light-check.html
+# Test-only copy forces light appearance; final artifact follows system appearance.
+# Browser: private/shared and actor views; foreign shared record read-only; transfer
+# validation; credit payment; refund limit; debit account linkage; beginning balance;
+# multi-day schedule; create/edit/cancel; save failure input retention and retry.
+# Actual example balance/total assertions are recorded in 14_UNIFIED_SCREEN_PREVIEW.md.
+# Found rapid-navigation regression caused by widget preference state echoes.
+# Fixed canonical state comparison and ignored sent-state echoes; 4 rapid actor/filter
+# navigation checks plus cancel, income create/edit and save retry passed afterward.
+# Layout: 54 dark combinations at 320/360/736 px and 12 light combinations at
+# 320/360 px, all without horizontal overflow or controls outside product surface.
+# Final browser console error list empty. Host Tweak panel itself not tested.
+# Extracted inline script checked using node --check on stdin: exit=0.
+# Final fragment read-back: 44,375 bytes, no outer document tags or network API calls.
+# Python checked local links/trailing whitespace in 9 changed Markdown files: passed.
+# Updated design, backlog and handoff documents; F-001 complete as a design artifact.
+# Real persistence, API authorization/RLS and production ledger remain unimplemented.
+# No app tests/build, dependency install, migration, commit or push in this revision.
+git diff --check
+# exit=0. Temporary preview server stopped and browser viewport override reset.
+
+# 2026-09-26 F-001 calendar-first revision
+# User requested the calendar as the main initial screen. Updated existing mockup;
+# monthly grid always visible, selected-day agenda/add action below, preview controls
+# collapsed below the product. Account/card/report behavior remains mock data.
+node -e 'for (const p of ["react","vite","typescript"]) console.log(p,require("./apps/web/node_modules/"+p+"/package.json").version)'
+# exit=0: react 19.3.0, vite 8.3.1, typescript 6.0.3.
+# Rechecked W3C WCAG 2.2 Use of Color; source/date and design choices in docs/14.
+python3 /Users/yoon-yongseol/.codex/plugins/cache/openai-bundled/visualize/1.0.41/skills/visualize/scripts/render.py /Users/yoon-yongseol/.codex/visualizations/2026/09/26/01a0df1d-8130-76b3-bf5c-6ee28cae1bd6/dayjoin-unified.html --serve --port 5186
+# First attempt exit=2: local binding denied; approved retry served at localhost.
+# Browser: initial calendar, day selection, month arrows, cross-month trip, selected
+# date in event/finance forms, saved event stays selected and updates date count,
+# actor/scope/type filters, private records absent from other actor's date indicators,
+# empty-day registration and error/retry restoration passed.
+# A label locator failed; role-based combobox locator resolved the control.
+# Native month-input fill failed in browser automation; no claim of direct month
+# input verification. Previous/next controls verified month changes instead.
+cp /Users/yoon-yongseol/.codex/visualizations/2026/09/26/01a0df1d-8130-76b3-bf5c-6ee28cae1bd6/dayjoin-unified.html /private/tmp/dayjoin-unified-light-check.html
+# exit=0. Forced light appearance only in temporary copy; original remains adaptive.
+python3 /Users/yoon-yongseol/.codex/plugins/cache/openai-bundled/visualize/1.0.41/skills/visualize/scripts/render.py /private/tmp/dayjoin-unified-light-check.html --serve --port 5186
+# Dark: normal/empty/error/six-week month at 320/360/736 px = 12 combinations.
+# Light: normal calendar at the same 3 widths. All 15 show calendar above filters,
+# no horizontal overflow or controls outside product surface. Screenshots inspected.
+# node --check via extracted inline script stdin: exit=0; fragment 49,494 bytes,
+# no outer document tags or network API calls. No app source/dependency/schema edits,
+# app tests/build, install, migration, commit or push in this revision.
+# Final browser console error list empty; 4 changed Markdown files passed local
+# link/whitespace checks. Preview server stopped; viewport reset; test tab closed.
+git diff --check
+# exit=0.
+
+# 2026-09-26 mobile app and web product scope
+# User requested both app and web versions. Scope this turn: requirements and
+# architecture/backlog proposal; no app scaffold or framework installation.
+node -e 'for (const p of ["react","vite","typescript"]) console.log(p,require("./apps/web/node_modules/"+p+"/package.json").version)'
+# exit=0: react 19.3.0, vite 8.3.1, typescript 6.0.3.
+# Read official Capacitor v8 introduction, installation and development workflow;
+# read Expo introduction as alternative. Expo monorepo page fetch failed and was
+# not used as evidence. Sources/date are recorded in 15_APP_AND_WEB_PLAN.md.
+# Proposed React/Vite + Capacitor given existing stack and solo development.
+# App+web scope is user-requested; framework/OS release order remain proposals.
+# Updated PRD (removed app exclusion and obsolete list-first default), architecture,
+# platform plan, delivery backlog, decisions, handoff and README.
+# Python local link/whitespace checks on 7 Markdown files: passed.
+git diff --check
+# exit=0. No code/dependency/lockfile changes, install, native project generation,
+# build, migration, app test, store submission, commit or push in this revision.
+
+# 2026-09-26 F-002 React calendar + ledger demo UI
+# User authorized the next step after app + web planning. Scope: real React
+# responsive UI with in-memory examples; no auth/ledger API/native packaging.
+node --version
+pnpm --version
+pnpm --filter web exec vite --version
+# Node v24.20.0 / pnpm 11.24.0 / Vite 8.3.1. Installed React 19.3.0, TS 6.0.3.
+pnpm add --help
+# Confirmed --save-exact. Initial registry read stalled under restricted network;
+# cancelled with Ctrl+C (exit 130), then retried with approved network access.
+pnpm view @fullcalendar/react version peerDependencies --json
+pnpm view lucide-react version peerDependencies --json
+# FullCalendar 7.1.0 supports React 17-19 and temporal-polyfill ^1.0.1.
+# Lucide React 1.48.0 supports installed React. Official v7 docs and local .d.ts
+# confirmed consolidated imports, CSS and public day-cell hooks. An initial .d.ts
+# glob used the wrong dist path; corrected to package chunks. Guessed migration
+# doc URLs did not open; used official React/day-grid/hooks docs instead.
+pnpm --filter web add --save-exact @fullcalendar/react@7.1.0 temporal-polyfill@1.0.1 lucide-react@1.48.0
+# exit=0; exact dependency versions and pnpm-lock.yaml updated through CLI.
+# Replaced starter UI with calendar, selected-day agenda, record forms/details,
+# accounts, reports and explicit demo settings. Added domain tests; root test now
+# invokes API + web. Dependencies were not added by hand-editing package.json.
+# An apply_patch replacing the same path with delete+add was rejected without
+# applying; used normal file writes for those complete scaffold replacements.
+pnpm --filter web typecheck
+# Initial check exit=0.
+pnpm --filter web lint
+# Initial check exit=0 with Fast Refresh warning for a function export in ui.tsx;
+# moved recordValue into model.ts. Final full lint below has no warning.
+pnpm --filter web dev --host 127.0.0.1
+# First listen failed: EPERM 127.0.0.1:5173 under sandbox. Approved retry succeeded;
+# left dev server running for user preview at http://127.0.0.1:5173/.
+pnpm --filter api exec prettier --version
+# 3.9.9 (existing dependency).
+pnpm --filter api exec prettier --write ../web/src/App.tsx ../web/src/App.css ../web/src/index.css '../web/src/features/dayjoin/*.{ts,tsx}' '../web/tests/*.test.ts' ../web/index.html
+# exit=0; final changed source/test/config files formatted again after fixes.
+pnpm test
+# Final exit=0: API Vitest 6/6, web Node test runner 17/17.
+pnpm typecheck
+# Final exit=0: API + web + web tsconfig.test.json. Node type stripping is not
+# treated as a substitute for this separate TypeScript check.
+pnpm lint
+# Final exit=0: API type-aware oxlint + web oxlint, no warnings/errors.
+pnpm --filter web build
+# Final exit=0: tsc -b + Vite 8.3.1. JS 483.18 kB / gzip 146.54 kB;
+# CSS 39.92 kB / gzip 8.98 kB. No API/container rebuild needed for this UI change.
+# Browser via CUA: date buttons were hidden under FullCalendar's duplicate-label
+# aria-hidden container. Exposed interactive custom content via dayCellDidMount.
+# Month-boundary keyboard focus initially disappeared; replaced asynchronous
+# gotoDate focus with month-keyed render and button refs. Retest passed.
+# Native dialog initial input focus, discard confirmation focus/scroll, focus
+# return, reload reset, selected-date create/edit, other-member detail, refund,
+# payment and amount totals, failed save/retry, cancellation and account creation
+# passed. Reset dialog closed on submit; an extra close locator timed out, then
+# fresh state confirmed successful reset and empty screens.
+# Layout: 320/360/768/1024/1440 px x 3 screens = 15 light configurations without
+# document horizontal overflow. 360px light + 320px dark/form screenshots inspected.
+# 320px six-week month and empty calendar/accounts/reports checked. Viewport reset.
+# Major light text-color pairs initially below 4.5:1 were darkened. Recalculated
+# 7 pairs per theme: light min 4.84:1, dark min 5.66:1. This is not a full audit.
+# Final browser console error/warn: []. Development tab marked as deliverable.
+# Screenshots saved outside repo: /private/tmp/dayjoin-web.png and
+# /private/tmp/dayjoin-mobile.png. No secrets or actual financial data used.
+# Local Markdown target check across README and docs: PASS.
+git diff --check
+# exit=0. No schema/migration/auth/native app/store changes, commit or push.
+# Existing planning edits preserved. Details: docs/16_REACT_UI_IMPLEMENTATION.md.
+
+# 2026-09-26 weekend + Korean public-holiday display
+# Read current AGENTS/engineering/handoff. Confirmed installed React 19.3.0,
+# Vite 8.3.1, TypeScript 6.0.3 and @fullcalendar/react 7.1.0 from package metadata.
+# Checked official day-cell docs against installed v7 .d.ts public hooks.
+# Compared KASI 2026/2027 date tables with official KASA 2027 announcement and
+# 2026 holiday regulation update. Old 2026 data omitted Labor/Constitution Day;
+# included both using the newer announcement. Sources: docs/17_KOREAN_HOLIDAYS.md.
+# KASI 2025 and MPM article body requests returned tool internal errors; no data
+# from those failed reads was used. Coverage is explicitly 2026-2027, not all years.
+# Added independent holidays.ts, weekend colors, holiday names/background,
+# selected-day full name, screen-reader labels, supported-year/coverage notice.
+# No new dependencies/API/schema or changes to the earlier HTML prototype.
+pnpm --filter api exec prettier --write ../web/src/App.tsx ../web/src/App.css ../web/src/index.css ../web/src/features/dayjoin/MonthCalendar.tsx ../web/src/features/dayjoin/holidays.ts ../web/tests/holidays.test.ts
+# exit=0; edited calendar/style files formatted again after a small cleanup.
+pnpm --filter web test
+# exit=0: 24/24 tests (17 existing + 7 holiday tests). Includes totals/data dates,
+# substitute exceptions, unsupported years and timezone-independent weekdays.
+pnpm --filter web typecheck
+pnpm --filter web lint
+pnpm --filter web build
+# Final exit=0 each. JS 486.35 kB / gzip 147.49 kB; CSS 41.99 kB / gzip 9.37 kB.
+# CUA: URL lookup had multiple tabs; resolved previously created test tab 5,
+# preserving user tab 6. One failed variable assignment was rebound correctly.
+# Verified September Chuseok, Saturday holiday red precedence, next-month holiday,
+# October substitute full-name detail, type filter persistence, zero record count,
+# 2028 missing-data notice, 6-week May calendar, light and dark appearances.
+# Initial mobile long holiday name overflowed due to inherited nowrap. Added
+# explicit white-space: normal. Rechecked 320/360/768/1280 px after settled render:
+# no document overflow or holiday-name clipping. Final console warn/error: [].
+# Saved /private/tmp/dayjoin-holidays-mobile.png; viewport and light/current-month
+# test state restored. Existing dev server left running; no commit/push/deploy.
+# Changed-document local Markdown links: PASS.
+git diff --check
+# exit=0.
+
+# 2026-09-26 library-first engineering preference + holiday migration proposal
+# User requested a recommendation and library-first development going forward.
+# Read AGENTS, engineering standard, handoff and current holiday implementation.
+node --version
+pnpm --version
+node -e 'for (const p of ["react", "vite", "typescript", "@fullcalendar/react"]) console.log(p, require("./apps/web/node_modules/" + p + "/package.json").version)'
+# exit=0: Node 24.20.0, pnpm 11.24.0, React 19.3.0, Vite 8.3.1,
+# TypeScript 6.0.3, FullCalendar React 7.1.0.
+# Rechecked upstream holidays-kr README/package.json and date-holidays KR rules.
+# Remote holidays-kr metadata: 5.2027.2, MIT, Node >=18; not an installed version.
+# Added library selection/update criteria to AGENTS and engineering standard,
+# and a concrete holiday migration proposal to docs/17. Decisions/handoff updated.
+# No package installation, product code change, app tests/build, API integration,
+# scheduled updates, commit or push. Earlier test results remain historical.
+# Python inline local Markdown link/whitespace check: PASS for all 5 edited docs.
+git diff --check
+# exit=0 before this log append; final check repeated after append.
+
+# 2026-09-26 holiday library migration (user approved proceeding)
+# Read engineering/handoff and current holiday code. Preserved existing local edits.
+node --version
+pnpm --version
+pnpm add --help
+node -e 'for (const p of ["react", "vite", "typescript"]) console.log(p, require("./apps/web/node_modules/" + p + "/package.json").version)'
+# exit=0: Node 24.20.0, pnpm 11.24.0, React 19.3.0, Vite 8.3.1, TS 6.0.3.
+# Official upstream src/index.ts read; guessed src/all.ts returned 404, migration
+# document fetch cache miss and npm web page 403. Used registry CLI and installed
+# README/package exports/.d.ts/JS instead of relying on failed web reads.
+pnpm view @hyunbinseo/holidays-kr version engines license dependencies peerDependencies dist.unpackedSize --json
+# exit=0 via approved network: 5.2027.2 / Node >=18 / MIT / 28,633 unpacked bytes.
+# No runtime or peer dependencies. Confirmed public /all data API after install.
+pnpm --filter web add --save-exact @hyunbinseo/holidays-kr@5.2027.2
+# exit=0. Added one package using CLI; package.json and lockfile updated.
+# pnpm --filter web exec node --input-type=module (inline inspection): exports
+# y2018..y2027, 2025 overlap names, 2026 22 and 2027 24 named holiday dates.
+# Before editing, saved existing normalized 46-date data to
+# /private/tmp/dayjoin-holidays-before.json using an inline Node script.
+# Replaced all hand-maintained dates with package exports; retained display
+# aliases. Coverage derives from actual date keys. Combined overlapping names.
+pnpm --filter api exec prettier --write ../web/src/features/dayjoin/holidays.ts ../web/src/features/dayjoin/MonthCalendar.tsx ../web/tests/holidays.test.ts
+# exit=0.
+pnpm --filter web test
+pnpm --filter web lint
+pnpm --filter web typecheck
+# Tests 26/26 and lint passed. Initial typecheck failed with TS7006 after
+# Object.entries inferred any from heterogeneous literal preset types. Fixed by
+# declaring a readonly Record<string, readonly string[]>[] data boundary.
+# Inline Node assert.deepEqual: all 46 prior 2026-2027 dates, display/short names
+# and substituteFor fields exactly equal after migration. No fixture added to app.
+# Browser at 320px: overlap names exceeded old 24px height. Removed fixed height
+# and retained min-height, allowing content to grow within its day button.
+pnpm --filter api exec prettier --write ../web/src/features/dayjoin/holidays.ts ../web/src/App.css
+pnpm --filter web typecheck
+pnpm --filter web build
+# Final exit=0 each. JS 492.30 kB / gzip 148.78 kB; CSS 41.98 kB / gzip 9.37 kB.
+pnpm --filter web test
+pnpm --filter web lint
+# Final exit=0: 26/26 tests, lint clean after source/CSS fixes.
+# CUA temporary tab: 2025-05-05 both names in calendar, ARIA and selected-day
+# detail; filter keeps holiday and zero record count; 2027-05-03 substitute detail;
+# 2028 missing-coverage notice. No page or holiday-name overflow after fix at
+# 320/360/768/1280px. Final warn/error logs empty. User tab preserved.
+# Initial full-page capture had stitching artifacts; used a normal settled
+# viewport capture instead. Screenshot: /private/tmp/dayjoin-holiday-library.png.
+# Temporary viewport reset and test tab closed. Existing dev server left running.
+# Updated current implementation/selection rationale/update process and handoff.
+# No API/schema/auth/native changes; no API/DB tests repeated, scheduled update,
+# commit, push or deployment in this revision.
+# Python local Markdown link/whitespace checks: PASS for 4 updated documents.
+git diff --check
+# exit=0; repeated after final log append.
+
+# 2026-09-26 remove the weekend/holiday legend at user request
+# Confirmed React 19.3.0, Vite 8.3.1 and TS 6.0.3; checked React 19.3 JSX docs:
+# https://react.dev/learn/writing-markup-with-jsx . This is a user UI choice.
+# Removed weekend/holiday legend and country/year caption, unused CSS, unused
+# coverage-label export and its assertion. Dates/colors/names/coverage checks stay.
+pnpm --filter web lint
+pnpm --filter web typecheck
+pnpm --filter web build
+# exit=0 each.
+pnpm --filter web test
+# exit=0: 26/26 existing tests; no new tests for this small presentational removal.
+# Browser DOM confirmed legend/country caption absent and Chuseok name/red class
+# retained. Updated docs/17 and handoff. No dependency install, commit or push.
+
+# 2026-09-27 shared dropdown UI after user design feedback
+# Read project engineering/handoff and UI code. Verified Node 24.20.0,
+# pnpm 11.24.0, React 19.3.0, Vite 8.3.1 and TypeScript 6.0.3.
+# Official docs: https://www.radix-ui.com/primitives/docs/components/select
+pnpm view @radix-ui/react-select version peerDependencies license dist.unpackedSize --json
+# exit=0: 2.3.7, MIT, React/React DOM 16.8-19, 352057 unpacked bytes.
+pnpm add --help | head -n 24
+pnpm --filter web add --save-exact @radix-ui/react-select@2.3.7
+# exit=0: 38 packages including transitive dependencies; CLI updated lockfile.
+# Read installed declarations and implementation for Portal.container, controlled
+# state, keyboard focus, positioning and Escape behavior.
+# Added shared SelectField; replaced 8 source select sites in App/RecordForm/
+# Accounts. Kept dialog portals inside native top layer; adjusted initial focus.
+pnpm --filter api exec prettier --write ../web/src/App.tsx ../web/src/App.css ../web/src/features/dayjoin/SelectField.tsx ../web/src/features/dayjoin/SelectField.css ../web/src/features/dayjoin/RecordForm.tsx ../web/src/features/dayjoin/Accounts.tsx ../web/src/features/dayjoin/ui.tsx
+pnpm --filter web lint
+pnpm --filter web test
+# exit=0: lint and 26/26 existing domain/holiday tests.
+pnpm --filter web typecheck
+pnpm --filter web build
+# Both initially failed TS2322: optional linkedId passed to required string prop.
+# Fixed Accounts linked selector with value={draft.linkedId ?? ""}.
+pnpm --filter web typecheck && pnpm --filter web build && pnpm --filter web lint
+# exit=0. Vite warning: JS chunk exceeds 500 kB. JS 578.54 kB / gzip 178.24 kB;
+# CSS 43.96 kB / gzip 9.81 kB. JS gzip +29.62 kB over preceding UI build.
+# CUA temporary tab: keyboard scope filtering and focus return, Escape closes
+# only select inside native dialog, dark theme, transfer kind/account selection,
+# missing-account error attrs, saved transfer balances and linked debit card.
+# Empty account list disabled. 320/360/768/1280px no page overflow and menus
+# inside viewport; light/dark visuals inspected. Outside click closes menu.
+# First viewport loop assumed popup remained open on resize; Radix closes it.
+# Reopened per width and measurements passed. Scoped an ambiguous ledger button
+# locator to the dialog. Final console warn/error: [].
+# Screenshot /private/tmp/dayjoin-dropdown.png. Test tab closed, viewport reset,
+# user tab and existing development server preserved. Only in-memory demo data.
+pnpm --filter web test && git diff --check
+# exit=0: 26/26 tests and whitespace check after final code fix.
+# Added docs/18 and handoff entry. No API/DB/native tests, commit/push/deploy.
+
+# 2026-09-27 system theme and branch-based GitHub checkpoint
+# User authorized theme/settings completion and GitHub save, then required dev
+# and per-task branches. Read AGENTS/engineering/handoff and current UI.
+node --version
+pnpm --version
+# Node 24.20.0, pnpm 11.24.0. Installed React 19.3.0, Vite 8.3.1, TS 6.0.3.
+# First registry metadata request and gh repo read failed in restricted network.
+# Retried with approved network access; no product code changed on main.
+git fetch origin
+git branch dev origin/main
+git switch -c feature/calendar-ledger-ui dev
+git push -u origin dev
+# exit=0. main/dev base 05cf626; all existing edits preserved on feature branch.
+# dev upstream now origin/dev. GitHub repository public; no existing open PRs.
+pnpm view next-themes version peerDependencies license dist.unpackedSize time.modified --json
+pnpm add --help | head -n 24
+pnpm --filter web add --save-exact next-themes@0.4.6
+# exit=0: MIT, React 16.8-19, 33783 bytes, last modified 2025-03-11; one package.
+# Checked official README and installed declarations/JS. Added ThemeProvider,
+# system option, storage key dayjoin-theme and browser theme-color sync.
+# CI pushes now main/dev; PR CI still all branches. Added branch rules.
+pnpm --filter api exec prettier --write ../web/src/main.tsx ../web/src/App.tsx
+pnpm lint
+pnpm typecheck
+pnpm test
+# exit=0 each; API 6/6, web 26/26.
+pnpm test:e2e
+# Restricted environment failed 5/5 HTTP contract tests while binding a port.
+pnpm test:e2e && pnpm build
+# Approved port access: exit=0, 5/5 HTTP tests and web/api build, Prisma generate.
+pnpm audit --prod --json
+# exit=1: 3 pre-existing Prisma transitive advisories, high 2/moderate 1.
+# Verified deepmerge-ts 7.1.5 and mysql2 3.15.3 also in origin/main lockfile.
+# No next-themes advisory. Full paths/links and follow-up in docs/20.
+# Browser: persisted dark on reload/new tab, live cross-tab light sync, restored
+# system selection. React warned about CSR-inserted SSR bootstrap script.
+# Set public scriptProps type=text/plain; provider effect handles CSR theme.
+pnpm --filter api exec prettier --write ../web/src/main.tsx
+pnpm --filter web lint && pnpm --filter web typecheck && pnpm --filter web build
+# exit=0. Final JS 582.11 kB/gzip 179.55; CSS 43.96/gzip 9.81. Existing >500 kB
+# chunk warning remains. Fresh browser tab dark/system checks passed, no errors.
+# Screenshot /private/tmp/dayjoin-system-theme.png. Actual OS toggling, mobile
+# hardware, blocked storage and first-paint flash were not tested.
+# No local DB/Redis smoke repeated; PR CI will run those and API container checks.
+
+# 2026-09-27 reviewed UI integration after separate security fix
+# Security fix command/failure/test details are in docs/21_DEPENDENCY_SECURITY.md.
+# PR #2 head def0ff7 passed CI 36296440566 including audit, DB/Redis and container.
+gh pr merge 2 --repo FrostYOON/Dayjoin --merge --match-head-commit def0ff7be20f1267ea43a24311c092bcca67f31b
+# exit=0, dev merge 0aada8c. No branch deletion and main unchanged.
+git fetch origin
+git merge --no-edit origin/dev
+# exit=0 on feature/calendar-ledger-ui; workflow/lockfile merged without conflict.
+pnpm install --frozen-lockfile
+pnpm audit --prod
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm test:e2e
+pnpm build
+# exit=0 each. Audit 0; API 6, web 26, HTTP 5. Final web chunk warning unchanged.
+# Read UI form/error handling, visibility projection, balances/refunds, calendar
+# keyboard paths, modal/dropdown lifecycle and existing coverage. No new blocker
+# identified for the documented in-memory demo; not an auth/security certification.
+# Runtime DB/Redis used in the separate fix worktree was stopped after tests,
+# preserving volumes. Existing web dev server remains available.
