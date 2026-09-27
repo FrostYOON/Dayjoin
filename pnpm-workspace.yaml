@@ -10,3 +10,4 @@ allowBuilds:
 overrides:
   '@prisma/config@7.10.0>deepmerge-ts': 8.0.0
   prisma@7.10.0>mysql2: 3.23.1
+  xcode@3.0.1>uuid: 11.1.1
