@@ -745,3 +745,34 @@ pnpm build
 # pnpm test: API 6 + web 26 성공.
 # pnpm test:e2e: HTTP 계약 5 성공.
 # pnpm build: Prisma generate + API/web 성공, 기존 500 kB 청크 경고 유지.
+
+# 2026-09-27 — P-010 Capacitor 앱 구성 (네이티브 실행은 미검증)
+# 관리형 worktree 재사용, git switch -c feature/mobile-shell origin/dev
+# Node 24.20.0 / pnpm 11.24.0 명시, cap core/cli/ios/android 모두 8.5.2 확인.
+# pnpm --filter web add --save-exact @capacitor/core@8.5.2 @capacitor/ios@8.5.2 @capacitor/android@8.5.2
+# pnpm --filter web add -D --save-exact @capacitor/cli@8.5.2
+# cap --version / init/add/sync/run --help 및 설치 타입 대조.
+# pnpm --filter web exec cap init Dayjoin com.frostyoon.dayjoin --web-dir dist
+# pnpm --filter web build
+# pnpm --filter web exec cap add ios --packagemanager SPM
+# pnpm --filter web exec cap add android
+# pnpm audit: 최초 실패 18건; Mau 17건은 PR #3에서 제거, uuid 1건은 제한된 override 적용.
+# pnpm config set --location=project --json overrides '{"@prisma/config@7.10.0>deepmerge-ts":"8.0.0","prisma@7.10.0>mysql2":"3.23.1","xcode@3.0.1>uuid":"11.1.1"}'
+# pnpm install
+# uuid 11.1.1 CommonJS 로딩, Xcode project parse/write, 고유 ID 100개 생성 확인 성공.
+# PR #3 최신 CI 성공 후 dev 병합: https://github.com/FrostYOON/Dayjoin/actions/runs/36297096153
+# git merge --no-edit origin/dev: lockfile 충돌.
+# pnpm install --frozen-lockfile: overrides 불일치로 실패.
+# pnpm install --no-frozen-lockfile: 충돌을 공식 CLI로 재생성, 성공.
+# pnpm install --frozen-lockfile: 성공.
+# pnpm audit: 전체 0건, 성공.
+# pnpm lint / pnpm typecheck: 전체 성공.
+# pnpm --filter web test: 기존 웹 26개 성공.
+# pnpm mobile:sync: 웹 build + iOS/Android copy/update 성공, 기존 582.11 kB 청크 경고.
+# Node assert: index/favicon/error HTML/JS/CSS 5개 파일이 양쪽 플랫폼과 바이트 단위 일치.
+# Node assert: appId/webDir/minWebViewVersion/errorPath 및 server.url 부재 확인 성공.
+# plutil -lint: Info.plist / project.pbxproj 성공.
+# git diff --check: 생성 Gradle 후행 공백 제거 후 성공.
+# xcrun simctl list devices available: Xcode 약관 미동의로 실패, 사용자 직접 검토 요청.
+# Android Studio/SDK 기본 경로 없음; java_home -V: Java runtime 없음.
+# 네이티브 빌드/시뮬레이터/에뮬레이터/실기기/서명/스토어는 미실행.

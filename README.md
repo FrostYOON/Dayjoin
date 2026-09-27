@@ -2,7 +2,7 @@
 
 일정과 가계부를 한 캘린더에서 관리하고, 선택한 기록을 함께 보는 서비스.
 
-**현재 상태: 기반 구현 + React 통합 화면(가상 데이터) / 2026-09-27.** 공식 CLI로 React/Vite와 NestJS를 생성하고 PostgreSQL/선택적 Redis, health API, Dockerfile/Compose, CI workflow를 구성했다. Git 기본 브랜치는 `main`이며 원격 저장소는 [FrostYOON/Dayjoin](https://github.com/FrostYOON/Dayjoin)이다. 달력 중심의 반응형 화면과 가상 일정·가계부가 동작한다. 로그인·테넌트 권한·영속 업무 모델·앱 패키징과 클라우드 배포는 아직 없다.
+**현재 상태: 기반 구현 + React 통합 화면(가상 데이터) / 2026-09-27.** 공식 CLI로 React/Vite와 NestJS를 생성하고 PostgreSQL/선택적 Redis, health API, Dockerfile/Compose, CI workflow를 구성했다. Git 기본 브랜치는 `main`이며 원격 저장소는 [FrostYOON/Dayjoin](https://github.com/FrostYOON/Dayjoin)이다. 달력 중심의 반응형 화면과 가상 일정·가계부가 동작한다. Capacitor iOS/Android 프로젝트를 생성했으며 네이티브 빌드·기기 실행은 아직 검증하지 않았다. 로그인·테넌트 권한·영속 업무 모델·클라우드 배포는 아직 없다.
 
 사용자 확정 조건은 **한국 우선, 1인 개발, TypeScript·NestJS 사용 경험이 가장 많고 Python은 조금 사용, 프론트엔드 경험 없음, 주 약 10시간, 초기 비용 최소화, 장기 수익화, 세 서비스 독립 개발**이다. React + Vite / NestJS 및 공식 CLI 중심 개발은 확정이다. 호스팅·일정·가격은 추천안/추정치다.
 
@@ -20,7 +20,7 @@
 
 현재는 Dayjoin의 통합 제품에 집중한다. Cashjoin의 금융 계산·원장 기획을 참고하되 다른 저장소·DB·Auth·배포의 병합이나 중단은 결정하지 않았다. 서비스 간 독립 원칙을 유지하며 중복되는 제품 역할은 별도 전략 결정으로 남긴다.
 
-플랫폼은 **모바일 앱 + 웹**으로 확장한다. 모바일은 월간 달력과 선택일 내역, PC 웹은 넓은 달력과 옆의 상세 영역을 기준으로 한다. [앱·웹 계획](docs/15_APP_AND_WEB_PLAN.md)의 초기 추천은 기존 React/Vite + Capacitor이며 네이티브 프로젝트와 앱 배포는 아직 없다.
+플랫폼은 **모바일 앱 + 웹**으로 확장한다. 모바일은 월간 달력과 선택일 내역, PC 웹은 넓은 달력과 옆의 상세 영역을 기준으로 한다. [앱·웹 계획](docs/15_APP_AND_WEB_PLAN.md)의 방향에 따라 기존 React/Vite + Capacitor 8.5.2의 네이티브 프로젝트를 생성했다. [앱 구성과 실행 조건](docs/22_MOBILE_SHELL.md)을 따르며 앱 출시·기기 검증은 미완료다.
 
 브랜치는 `main`(릴리스) → `dev`(통합) → 작업별 `feature/*`·`fix/*`·`docs/*`로 운영한다. 작업 PR은 dev로 모으고 병합은 별도로 진행한다. [브랜치 규칙](docs/19_GIT_WORKFLOW.md)을 따른다.
 
@@ -73,6 +73,18 @@ REDIS_ENABLED=true docker compose --profile cache --profile app up -d --build --
 
 이 경우 호스트의 dev:api는 동시에 실행하지 않는다(같은 3000 포트). 웹은 dev:web로 실행한다.
 
+## 앱 개발
+
+[앱 구성 기록](docs/22_MOBILE_SHELL.md)의 Xcode/Android Studio 설정이 필요하다. 아래 명령은 웹 빌드 후 플랫폼 동기화 또는 네이티브 빌드·실행을 수행한다.
+
+```sh
+pnpm mobile:sync
+pnpm mobile:ios
+# Android 실행: pnpm mobile:android
+```
+
+현재 Xcode 약관 미동의와 Android 개발 도구 미준비로 기기 실행 검증은 남아 있다. 앱 데이터도 메모리 예시이며 새로 시작하면 초기화된다.
+
 ## 검증·종료
 
 ```sh
@@ -102,8 +114,8 @@ DB volume은 보존한다. 초기 SQL은 새 volume에만 적용된다. 예시 �
 - [기반 검증 결과와 남은 범위](docs/10_BOOTSTRAP_VERIFICATION.md)
 - [공식 문서 기반 개발 기준](docs/08_ENGINEERING_STANDARD.md)
 
-GitHub Actions 파일은 .github/workflows/ci.yml에 준비했다. `main` 푸시와 PR에서 실행하며, 실제 실행 결과는 [GitHub Actions](https://github.com/FrostYOON/Dayjoin/actions)에서 확인한다. 클라우드 배포는 수행하지 않았다.
+GitHub Actions 파일은 .github/workflows/ci.yml에 준비했다. `main`/`dev` 푸시와 PR에서 실행하며, 실제 실행 결과는 [GitHub Actions](https://github.com/FrostYOON/Dayjoin/actions)에서 확인한다. 클라우드 배포는 수행하지 않았다.
 
 ## 새 채팅에서 이어가기
 
-세 프로젝트 기초 세팅 후 이 채팅에서 Dayjoin 화면 설계와 React 가상 화면까지 진행했다. 실제 서버 제품 기능과 앱 패키징은 후속 작업이다. [새 채팅 인계](docs/11_CHAT_HANDOFF.md)에 사용자 조건·완료 상태·다음 작업 후보를 정리했다.
+세 프로젝트 기초 세팅 후 이 채팅에서 Dayjoin 화면 설계와 React 가상 화면까지 진행했다. Capacitor 앱 프로젝트 생성까지 진행했으며 실제 서버 제품 기능과 네이티브 실행 검증은 후속 작업이다. [새 채팅 인계](docs/11_CHAT_HANDOFF.md)에 사용자 조건·완료 상태·다음 작업 후보를 정리했다.
