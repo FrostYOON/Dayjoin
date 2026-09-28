@@ -41,6 +41,8 @@ import {
   type Visibility,
 } from "./features/dayjoin/model.ts";
 import { EmptyState, Modal, RecordRow } from "./features/dayjoin/ui.tsx";
+import { useWebApp } from "./features/pwa/useWebApp.ts";
+import { WebAppSettings, WebAppUpdate } from "./features/pwa/WebAppSettings.tsx";
 import "./App.css";
 
 type Page = "calendar" | "accounts" | "reports";
@@ -57,6 +59,7 @@ const navigation = [
 ] as const;
 
 function App() {
+  const webApp = useWebApp();
   const [today] = useState(todayInSeoul);
   const [data, setData] = useState(() => createDemo(today));
   const [actor, setActor] = useState<Person>("jiwoo");
@@ -248,6 +251,7 @@ function App() {
             </button>
           </div>
         </header>
+        <WebAppUpdate webApp={webApp} editing={panel !== null} />
         <main id="main-content">
           {page === "calendar" ? (
             <div className="calendar-workspace">
@@ -538,6 +542,7 @@ function App() {
           }}
         >
           <div className="entry-form">
+            <WebAppSettings webApp={webApp} />
             <p className="notice">
               가상 인물과 예시 기록으로 화면을 확인할 수 있어요. 실제 로그인이나
               공유 기능은 아니에요.

@@ -745,3 +745,33 @@ pnpm build
 # pnpm test: API 6 + web 26 성공.
 # pnpm test:e2e: HTTP 계약 5 성공.
 # pnpm build: Prisma generate + API/web 성공, 기존 500 kB 청크 경고 유지.
+
+# 2026-09-27 Dayjoin 웹앱(PWA) 전환: feature/web-pwa from origin/dev 6acc53b
+# Node 24.20.0 / pnpm 11.24.0. 공식 문서/peer/types/CLI help 대조: docs/24_PWA_IMPLEMENTATION.md
+# pnpm view vite-plugin-pwa / workbox-window / @vite-pwa/assets-generator / @playwright/test
+# 제한 환경 registry ENOTFOUND -> 권한 있는 CLI로 재시도 성공.
+git switch -c feature/web-pwa origin/dev
+pnpm --filter web add -D vite-plugin-pwa@1.3.0 workbox-window@7.4.1 @vite-pwa/assets-generator@1.0.2 @playwright/test@1.58.2
+pnpm --filter web add -D @playwright/test@1.63.0
+# sharp ignored builds -> 설치 스크립트 검토 후 한 패키지만 승인.
+pnpm approve-builds sharp
+# sharp 0.33.5 audit high 2 -> scoped override 0.35.5 시험 -> 릴리스 대기 예외 자동 추가 발견.
+# 자동 승인 거절 후 Git 원본/변경 비교 증거로 재승인. 이번 추가 예외 27개만 제거.
+# 작업 lockfile 임시 백업 후 최초 HEAD lockfile을 기준으로 보안 수정 0.35.4 CLI 재해석.
+pnpm install --no-frozen-lockfile
+pnpm install --frozen-lockfile
+pnpm --filter web exec pwa-assets-generator --help
+pnpm --filter web pwa:icons
+pnpm --filter web exec playwright install chromium
+pnpm audit
+# 최종 audit 0건. API/core 기존 버전 유지, Workbox 도구의 optional peer 해석이 lockfile에 추가됨.
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm test:e2e
+pnpm build
+pnpm --filter web test:pwa
+# 전체 lint/typecheck, API 6/web 26/HTTP 5, 전체 build, PWA browser 5 통과.
+# 최초 PWA 검사: 모바일 선택자 2건과 다중 탭 활성 worker 후 업데이트 오류 수정 후 전부 통과.
+# JS chunk 590.09 kB 경고 유지. 실제 휴대폰 설치/HTTPS 배포/제품 인증·저장은 미구현/미검증.
+git diff --check

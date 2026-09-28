@@ -2,7 +2,7 @@
 
 일정과 가계부를 한 캘린더에서 관리하고, 선택한 기록을 함께 보는 서비스.
 
-**현재 상태: 기반 구현 + React 통합 화면(가상 데이터) / 2026-09-27.** 공식 CLI로 React/Vite와 NestJS를 생성하고 PostgreSQL/선택적 Redis, health API, Dockerfile/Compose, CI workflow를 구성했다. Git 기본 브랜치는 `main`이며 원격 저장소는 [FrostYOON/Dayjoin](https://github.com/FrostYOON/Dayjoin)이다. 달력 중심의 반응형 화면과 가상 일정·가계부가 동작한다. 로그인·테넌트 권한·영속 업무 모델·앱 패키징과 클라우드 배포는 아직 없다.
+**현재 상태: 기반 구현 + React 통합 웹앱(PWA, 가상 데이터) / 2026-09-27.** 공식 CLI로 React/Vite와 NestJS를 생성하고 PostgreSQL/선택적 Redis, health API, Dockerfile/Compose, CI workflow를 구성했다. Git 기본 브랜치는 `main`이며 원격 저장소는 [FrostYOON/Dayjoin](https://github.com/FrostYOON/Dayjoin)이다. 달력 중심의 반응형 화면과 가상 일정·가계부가 동작한다. 설치용 manifest/아이콘·설치 안내·선택형 업데이트를 제공한다. 로그인·테넌트 권한·영속 업무 모델과 클라우드 배포는 아직 없다.
 
 사용자 확정 조건은 **한국 우선, 1인 개발, TypeScript·NestJS 사용 경험이 가장 많고 Python은 조금 사용, 프론트엔드 경험 없음, 주 약 10시간, 초기 비용 최소화, 장기 수익화, 세 서비스 독립 개발**이다. React + Vite / NestJS 및 공식 CLI 중심 개발은 확정이다. 호스팅·일정·가격은 추천안/추정치다.
 
@@ -16,11 +16,13 @@
 | 6 | [결정·인계 기록](docs/06_DECISIONS.md) | 확정 사항, 추천안, 남은 결정, 다음 작업 |
 | 참고 | [공식 근거](docs/07_SOURCES.md) | 2026-09-26 확인한 기술/요금 출처 |
 
-첫 사용 대상은 가족·커플이며 우선 사례는 저녁식사·여행이다. 사용자가 **계좌·카드·이체를 포함한 가계부와 기록별 개인/공유**로 범위를 넓혔다. [통합 가계부 설계안](docs/13_CALENDAR_RECORDS_PROPOSAL.md)을 바탕으로 [F-001 통합 시안과 가상 동작 확인](docs/14_UNIFIED_SCREEN_PREVIEW.md)을 완료했다. 이어서 **[F-002 React 가상 데이터 화면](docs/16_REACT_UI_IMPLEMENTATION.md)**을 구현했다. 다음은 P-010 앱 기기 적합성 확인이며, 실제 금융 원장·서버 저장·공유는 인증·권한 기반 이후 연결한다. 기존 일정 전용 공수는 재산정한다.
+첫 사용 대상은 가족·커플이며 우선 사례는 저녁식사·여행이다. 사용자가 **계좌·카드·이체를 포함한 가계부와 기록별 개인/공유**로 범위를 넓혔다. [통합 가계부 설계안](docs/13_CALENDAR_RECORDS_PROPOSAL.md)을 바탕으로 [F-001 통합 시안과 가상 동작 확인](docs/14_UNIFIED_SCREEN_PREVIEW.md)을 완료했다. 이어서 **[F-002 React 가상 데이터 화면](docs/16_REACT_UI_IMPLEMENTATION.md)**을 구현했다. 다음은 웹의 로그인·일정 영속 저장·공유이며, 실제 금융 원장·서버 저장·공유는 인증·권한 기반 이후 연결한다. 기존 일정 전용 공수는 재산정한다.
 
 현재는 Dayjoin의 통합 제품에 집중한다. Cashjoin의 금융 계산·원장 기획을 참고하되 다른 저장소·DB·Auth·배포의 병합이나 중단은 결정하지 않았다. 서비스 간 독립 원칙을 유지하며 중복되는 제품 역할은 별도 전략 결정으로 남긴다.
 
-플랫폼은 **모바일 앱 + 웹**으로 확장한다. 모바일은 월간 달력과 선택일 내역, PC 웹은 넓은 달력과 옆의 상세 영역을 기준으로 한다. [앱·웹 계획](docs/15_APP_AND_WEB_PLAN.md)의 초기 추천은 기존 React/Vite + Capacitor이며 네이티브 프로젝트와 앱 배포는 아직 없다.
+플랫폼은 사용자 요청으로 **웹앱(PWA) 우선**으로 변경했다. 모바일은 월간 달력과 선택일 내역, PC는 넓은 달력과 옆의 상세를 유지한다. [플랫폼 계획](docs/15_APP_AND_WEB_PLAN.md)과 [PWA 구현·검증](docs/24_PWA_IMPLEMENTATION.md)을 따른다. 기존 Capacitor 작업은 `feature/mobile-shell` / Draft PR #4에 보존하며 현재 범위에서 보류한다.
+
+PWA 확인: `pnpm --filter web build` 후 `pnpm --filter web preview --host 127.0.0.1 --port 4173 --strictPort`. 설정에서 설치 안내를 볼 수 있다. 개발 서버 5173에서는 서비스 워커를 등록하지 않는다. 휴대폰 설치에는 별도 HTTPS 시험 주소가 필요하다. 예시 기록은 설치해도 새로고침 시 초기화된다. 브라우저 검사: `pnpm --filter web exec playwright install chromium` → `pnpm --filter web test:pwa` (4174 사용).
 
 브랜치는 `main`(릴리스) → `dev`(통합) → 작업별 `feature/*`·`fix/*`·`docs/*`로 운영한다. 작업 PR은 dev로 모으고 병합은 별도로 진행한다. [브랜치 규칙](docs/19_GIT_WORKFLOW.md)을 따른다.
 
@@ -106,4 +108,4 @@ GitHub Actions 파일은 .github/workflows/ci.yml에 준비했다. `main` 푸시
 
 ## 새 채팅에서 이어가기
 
-세 프로젝트 기초 세팅 후 이 채팅에서 Dayjoin 화면 설계와 React 가상 화면까지 진행했다. 실제 서버 제품 기능과 앱 패키징은 후속 작업이다. [새 채팅 인계](docs/11_CHAT_HANDOFF.md)에 사용자 조건·완료 상태·다음 작업 후보를 정리했다.
+세 프로젝트 기초 세팅 후 이 채팅에서 Dayjoin 화면 설계와 React 가상 화면까지 진행했다. 현재 웹앱 기반까지 구현했고 실제 서버 제품 기능은 후속 작업이다. 네이티브 앱은 보류한다. [새 채팅 인계](docs/11_CHAT_HANDOFF.md)에 사용자 조건·완료 상태·다음 작업 후보를 정리했다.

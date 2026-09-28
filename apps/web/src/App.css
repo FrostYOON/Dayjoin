@@ -3,6 +3,37 @@
   grid-template-columns: 220px minmax(0, 1fr);
   min-height: 100svh;
 }
+.web-app-settings {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--paper);
+  font-size: 13px;
+}
+.web-app-settings h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+.web-app-settings summary { cursor: pointer; font-weight: 600; }
+.web-app-settings details p { margin-top: 10px; }
+.web-app-update {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px clamp(16px, 3vw, 40px) 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--expense-soft);
+}
+.web-app-update p { font-size: 13px; }
+.web-app-update .button-row { flex-wrap: wrap; }
 .skip-link {
   position: fixed;
   z-index: 100;
