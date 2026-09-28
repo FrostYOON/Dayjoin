@@ -29,6 +29,13 @@
     "infra:up": "docker compose up -d --wait postgres",
     "infra:cache": "docker compose --profile cache up -d --wait postgres redis",
     "infra:down": "docker compose --profile cache --profile app down",
-    "test:integration": "node scripts/smoke.mjs"
+    "test:integration": "node scripts/smoke.mjs",
+    "auth:start": "node scripts/auth-start.mjs",
+    "auth:env": "node scripts/auth-env.mjs",
+    "auth:stop": "pnpm exec supabase stop",
+    "test:auth": "pnpm --filter web test:auth"
+  },
+  "devDependencies": {
+    "supabase": "2.118.0"
   }
 }

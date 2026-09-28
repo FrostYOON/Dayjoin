@@ -24,6 +24,22 @@ describe('environment validation', () => {
       'Invalid environment fields',
     );
   });
+  it.each([
+    { SUPABASE_URL: 'https://dayjoin.example' },
+    { SUPABASE_PUBLISHABLE_KEY: 'public-key' },
+    {
+      SUPABASE_URL: 'http://remote.example',
+      SUPABASE_PUBLISHABLE_KEY: 'public-key',
+    },
+    {
+      SUPABASE_URL: 'https://user:secret@example.com',
+      SUPABASE_PUBLISHABLE_KEY: 'public-key',
+    },
+  ])('rejects incomplete or unsafe Auth settings: %j', (settings) => {
+    expect(() => validateEnvironment({ ...base, ...settings })).toThrow(
+      'Invalid environment fields',
+    );
+  });
   it('does not leak credentials into validation errors', () => {
     expect(() =>
       validateEnvironment({ DATABASE_URL: 'secret-password' }),
