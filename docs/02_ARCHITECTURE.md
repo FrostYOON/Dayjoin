@@ -2,7 +2,7 @@
 
 최신 범위(2026-09-26): 사용자 방향에 따라 계좌·카드·이체까지 포함한 가계부를 Dayjoin에 설계한다. 아래 기존 일정 모델에 금융 거래 금액 필드만 추가하는 방식으로 구현하지 않는다. [통합 가계부 설계안](13_CALENDAR_RECORDS_PROPOSAL.md)의 별도 개인 원장·계정·거래 명령과 캘린더 공개 조회 경계를 함께 따른다. 실제 업무 schema와 금융 모듈은 아직 없다.
 
-최신 플랫폼 범위: 모바일 앱과 웹을 모두 제공한다. 현재 추천은 **React/Vite 화면 공유 + Capacitor 앱 구성**이며, 네이티브 도구/프로젝트는 미설치·미생성이다. 모바일과 PC는 별도 배치를 사용하고 같은 Dayjoin API/Auth/업무 데이터를 공유한다. 근거·대안·버전 확인·단계는 [앱·웹 계획](15_APP_AND_WEB_PLAN.md)을 따른다.
+최신 플랫폼 범위(2026-09-27): **React/Vite 기반 웹앱(PWA)**을 먼저 제공한다. 모바일/PC 브라우저와 홈 화면 설치를 대상으로 하며 Nest API/PostgreSQL을 공유한다. Capacitor 네이티브 구성은 별도 브랜치/PR에서 보류한다. [플랫폼 계획](15_APP_AND_WEB_PLAN.md)과 [PWA 구현](24_PWA_IMPLEMENTATION.md)을 따른다.
 
 
 ## 공통 기술 결정안
@@ -34,7 +34,7 @@
 - FastAPI/Django는 Python 중심 개발을 선택할 때 유효한 대안이다. 현재는 Nest 경험과 주 10시간 조건을 활용하는 쪽으로 결정한다. Python 서버를 의무적으로 함께 운영하지 않는다.
 - Nest의 Fastify 어댑터는 실제 병목과 플러그인 호환성을 확인한 뒤 검토한다. 프레임워크 순위만으로 변경하지 않는다.
 - Next.js는 소개 사이트의 검색 유입/서버 렌더링 요구가 커질 때 재검토한다. 현재 프론트 학습은 React/Vite에 집중한다.
-- 세 서비스의 저장소·DB·Auth·배포는 독립이다. 현재 각 저장소 안에서 web/api를 pnpm workspace로 묶는다. Dayjoin의 모바일 앱 구성은 같은 Dayjoin 안에 추가하는 제안이다. 서비스 간 SSO, 공유 운영 DB, 마이크로서비스, Kubernetes, Kafka는 첫 버전에 넣지 않는다.
+- 세 서비스의 저장소·DB·Auth·배포는 독립이다. 현재 각 저장소 안에서 web/api를 pnpm workspace로 묶는다. Dayjoin의 스토어 앱 구성은 현재 보류한다. 서비스 간 SSO, 공유 운영 DB, 마이크로서비스, Kubernetes, Kafka는 첫 버전에 넣지 않는다.
 
 ### 예정 폴더 구조
 

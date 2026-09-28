@@ -6,6 +6,8 @@
   },
   "include": [
     "tests",
+    "e2e",
+    "playwright.config.ts",
     "src/features/dayjoin/model.ts",
     "src/features/dayjoin/seed.ts"
   ]

@@ -115,6 +115,7 @@ export function Modal({
     const previous = document.activeElement as HTMLElement | null;
     dialog.showModal();
     const initialFocus =
+      dialog.querySelector<HTMLElement>("[data-initial-focus]") ??
       dialog.querySelector<HTMLElement>("input[autofocus]") ??
       dialog.querySelector<HTMLElement>(
         'input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), [role="combobox"], textarea',

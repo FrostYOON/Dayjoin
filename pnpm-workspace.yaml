@@ -7,6 +7,9 @@ cacheDir: .pnpm-cache
 allowBuilds:
   '@prisma/engines': true
   prisma: true
+  sharp: true
 overrides:
   '@prisma/config@7.10.0>deepmerge-ts': 8.0.0
   prisma@7.10.0>mysql2: 3.23.1
+  '@vite-pwa/assets-generator@1.0.2>sharp': 0.35.4
+  'sharp-ico@0.1.5>sharp': 0.35.4
