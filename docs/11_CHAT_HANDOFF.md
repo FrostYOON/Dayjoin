@@ -28,7 +28,9 @@ Dayjoin은 일정과 계좌·카드·이체를 포함한 가계부를 한 캘린
 12. 18_DROPDOWN_UI.md — Radix Select 공통 선택 메뉴, 네이티브 모달 호환, 브라우저 검증과 번들 비용.
 13. 19_GIT_WORKFLOW.md — main/dev/작업별 브랜치와 PR 운영.
 14. 20_THEME_AND_UI_CHECKPOINT.md — 시스템 테마·설정 저장, 최신 검증, 기존 의존성 보안 권고.
-15. 21_DEPENDENCY_SECURITY.md — 보안 권고 3건 해결, 제한된 overrides와 실제 DB/Redis 검증.
+15. 21_DEPENDENCY_SECURITY.md — Prisma 보안 보완·미사용 Mau 제거, 전체 감사와 실제 DB/Redis 검증.
+16. 22_MOBILE_SHELL.md — Capacitor 8.5.2 앱 생성, 실행 명령과 Xcode/Android 환경의 미완료 조건.
+17. 23_NATIVE_BUILD_VALIDATION.md — GitHub 실제 네이티브 빌드 및 iOS 첫 화면 확인, 남은 기기 조작 검증.
 
 ## 미완료 범위
 웹은 F-002의 React 달력·일정/가계부·계좌·카드·월 합계 화면이다. 예시 데이터만 메모리에 저장하며 새로고침하면 초기화된다. 업무 모델/migration/RLS, 로그인/JWT·초대·업무 권한, 도메인 기능·결제와 클라우드 배포는 없다. GitHub CI 통과 여부는 해당 커밋의 실행 결과로 판단한다.
@@ -56,3 +58,17 @@ D-001에서 가족·커플 대상과 **저녁식사·여행** 사례를 정리�
 2026-09-27 드롭다운 디자인 피드백을 반영해 `@radix-ui/react-select@2.3.7`을 CLI로 설치하고 필터·설정·기록·계좌 폼의 선택 메뉴를 공통화했다. 둥근 메뉴, 선택 체크, 다크 모드, 키보드 선택, 네이티브 dialog 안의 포털과 Escape 처리를 확인했다. 웹 lint/typecheck/build와 기존 테스트 26개가 통과했다. JS 청크 578.54 kB로 Vite의 500 kB 초과 경고가 남아 있으며 실제 기기/스크린리더는 미검증이다. 상세는 18_DROPDOWN_UI.md를 따른다. 이번에도 커밋·푸시하지 않았다.
 
 2026-09-27 사용자가 GitHub 저장과 dev/작업별 브랜치 분리를 요청했다. 초기 main 기준 dev를 원격에 만들었고, 누적 UI는 `feature/calendar-ledger-ui`에서 보존·정리한다. PR 대상은 dev이며 병합은 별도다. 최신 시스템 테마·저장 구현은 `next-themes@0.4.6`을 사용한다. 전체 lint/typecheck, API 6개·웹 26개·HTTP 계약 5개, 전체 build가 통과했다. 기존 Prisma 전이 의존성 보안 권고 3건과 웹 청크 경고는 미해결 후속 항목이다. 이전 문단의 미커밋 상태는 각 작업 당시 기록이며 현재 Git/PR 상태는 실제 원격을 확인한다. 테마와 검증의 상세는 20_THEME_AND_UI_CHECKPOINT.md를 따른다. 다음은 현재 PR 검토·dev 통합 및 의존성 보완, 이후 P-010 앱 실행 검증 → 인증/일정 저장 → 실제 공유 → 금융 원장 연결 순서다.
+
+## 최신 인계 · 2026-09-27 앱 구성
+
+사용자의 진행 요청에 따라 UI PR #1, Prisma 보안 PR #2, 미사용 배포 CLI 제거 PR #3을 최신 CI 성공 후 dev에 병합했다. main은 초기 `05cf626`에 유지했다. primary checkout은 dev이며 기존 웹 서버는 유지한다. 앱 작업은 재사용한 관리형 worktree의 `feature/mobile-shell`에 분리했다.
+
+Capacitor core/cli/ios/android 8.5.2를 CLI로 설치하고 iOS(SPM)·Android 프로젝트를 생성했다. 웹 build와 sync, 설정 검사, 기존 웹 회귀 검사를 통과했다. 개발 ID는 `com.frostyoon.dayjoin`이며 배포 등록 전 확정한다. iOS target 16.4/Android WebView 111은 Vite 출력과 맞춘 개발 기준이고 출시 지원 범위 검증이 아니다. uuid 전이 의존성의 제한된 override와 전체 audit를 적용했다.
+
+Xcode 27 약관 미동의로 Simulator 기기 조회가 막혔으며 사용자에게 직접 검토·동의를 요청했다. Android Studio/SDK/JDK도 준비되지 않았다. 앱 PR은 Draft로 보존하고 실제 네이티브 빌드·기기 조작을 완료로 기록하지 않는다. 사용자 응답 없이 약관에 동의하지 않는다. 자세한 명령/실패·수정/검증과 다음 실행 절차는 22_MOBILE_SHELL.md를 따른다. 인증/업무 저장은 아직 시작하지 않았다. 앞의 미설치·보안 권고 상태는 해당 작업 당시 기록이다.
+
+## 후속 네이티브 검증 · 2026-09-27
+
+사용자가 계속 진행을 요청했고 Xcode 설정 후 알려주기로 했다. 로컬 약관 상태는 미동의이며 Android 환경도 없다. `feature/mobile-shell` / PR #4에서 `Native apps` CI를 추가했다. 커밋 `842a00d`의 CI가 모두 통과했다. Android SDK 36 debug APK·lint, Xcode 26.6에서 iPhone 17 Pro / iOS 26.5 Simulator 빌드·설치·실행을 확인했다. 스크린샷에서 달력·공휴일·하단 메뉴 표시를 직접 확인했고 Android APK 안의 실제 웹 파일도 비교했다.
+
+전체 검사 결과·공식 근거·실행 기록과 캡처는 23_NATIVE_BUILD_VALIDATION.md를 따른다. 앱 PR은 Draft이며 P-010은 진행 중이다. 입력/키보드/뒤로가기/앱 복귀·실기기는 아직 미검증이다. 다음은 사용자가 Xcode 설정 완료를 알려주면 로컬 Simulator부터 다시 확인하는 것이다. 사용자 대신 약관에 동의하지 않으며 인증/업무 저장을 자동으로 시작하지 않는다.

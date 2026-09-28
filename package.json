@@ -29,6 +29,9 @@
     "infra:up": "docker compose up -d --wait postgres",
     "infra:cache": "docker compose --profile cache up -d --wait postgres redis",
     "infra:down": "docker compose --profile cache --profile app down",
-    "test:integration": "node scripts/smoke.mjs"
+    "test:integration": "node scripts/smoke.mjs",
+    "mobile:sync": "pnpm --filter web build && pnpm --filter web exec cap sync",
+    "mobile:ios": "pnpm --filter web build && pnpm --filter web exec cap run ios",
+    "mobile:android": "pnpm --filter web build && pnpm --filter web exec cap run android"
   }
 }

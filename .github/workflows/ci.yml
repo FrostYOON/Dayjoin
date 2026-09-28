@@ -31,6 +31,8 @@ jobs:
       - run: pnpm test
       - run: pnpm test:e2e
       - run: pnpm build
+      - name: Sync mobile project assets and configuration
+        run: pnpm --filter web exec cap sync
       - name: Start local dependencies
         run: docker compose --profile cache up -d --wait postgres redis
       - name: Integration with Redis disabled
