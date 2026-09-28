@@ -74,3 +74,35 @@ export function exchangeCallback(code: string) {
   if (exchange?.code !== code) exchange = { code, result: exchangeOnce(code) };
   return exchange.result;
 }
+
+export type SocialProvider = "google" | "apple";
+export type SocialProviders = Record<SocialProvider, boolean>;
+
+// auth-js has no settings method. This documented public Auth endpoint only
+// supplies availability; OAuth and PKCE remain entirely in the official SDK.
+export async function getSocialProviders(
+  signal: AbortSignal,
+): Promise<SocialProviders> {
+  if (!url || !key) return { google: false, apple: false };
+  const response = await fetch(`${url}/auth/v1/settings`, {
+    headers: { apikey: key },
+    cache: "no-store",
+    credentials: "omit",
+    signal: AbortSignal.any([signal, AbortSignal.timeout(10000)]),
+  });
+  if (!response.ok) throw new Error("Auth settings unavailable");
+  const settings: unknown = await response.json();
+  if (!settings || typeof settings !== "object" || !("external" in settings))
+    throw new Error("Invalid Auth settings");
+  const external = settings.external;
+  if (
+    !external ||
+    typeof external !== "object" ||
+    !("google" in external) ||
+    typeof external.google !== "boolean" ||
+    !("apple" in external) ||
+    typeof external.apple !== "boolean"
+  )
+    throw new Error("Invalid Auth providers");
+  return { google: external.google, apple: external.apple };
+}

@@ -143,7 +143,7 @@ test("invalid callback, form validation, mobile layout and dark theme", async ({
   await page.goto(
     "/auth/callback?error=access_denied&error_description=untrusted-message",
   );
-  await expect(page.getByRole("alert")).toContainText("링크가 만료");
+  await expect(page.getByRole("alert")).toContainText("로그인이 취소");
   await expect(page.getByText("untrusted-message")).toHaveCount(0);
   await expect(page).toHaveURL("http://127.0.0.1:4180/auth/callback");
   await page.setViewportSize({ width: 360, height: 800 });

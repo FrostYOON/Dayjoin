@@ -94,3 +94,5 @@ PWA PR #5는 이 작업 시작 시 OPEN/CI 성공 상태였고 병합 승인을 
 ## 로컬 완료 기록
 
 API 단위 **27개**, 웹 도메인 **26개**, HTTP **13개**, 실제 Auth 브라우저 **3개**가 통과했다. lint/typecheck/build, frozen-lockfile 재설치, Prisma validate/generate, 전체 pnpm audit(알려진 취약점 0개), Redis 비활성/활성 실제 DB smoke, API Docker 이미지 빌드가 통과했다. 운영 SMTP·클라우드·PWA 통합은 이 결과에 포함하지 않는다.
+
+2026-09-28 후속 변경: [구글·애플 로그인과 인증 설정](26_SOCIAL_AUTH.md). 이메일 인증 정책은 유지하며 소셜 SDK 연결·설정 상태 표시를 추가했다.

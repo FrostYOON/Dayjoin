@@ -17,6 +17,7 @@ import {
   exchangeCallback,
 } from "./client.ts";
 import { useAuth } from "./context.ts";
+import { SocialLogin } from "./SocialLogin.tsx";
 import "./auth.css";
 
 type Mode = "login" | "signup" | "forgot" | "reset" | "resend";
@@ -128,6 +129,7 @@ export function AuthPage({ mode }: { mode: Mode }) {
   const [visible, setVisible] = useState(false);
   const [sent, setSent] = useState(false);
   const [notice, setNotice] = useState("");
+  const [socialPending, setSocialPending] = useState(false);
   const {
     register,
     handleSubmit,
@@ -139,7 +141,7 @@ export function AuthPage({ mode }: { mode: Mode }) {
   const hasPassword = ["login", "signup", "reset"].includes(mode);
   const newPassword = mode === "signup" || mode === "reset";
   const submit = handleSubmit(async (fields) => {
-    if (!authClient) return;
+    if (!authClient || socialPending) return;
     setNotice("");
     try {
       const email = fields.email?.trim().toLowerCase();
@@ -266,6 +268,12 @@ export function AuthPage({ mode }: { mode: Mode }) {
               아직 로그인 연결을 준비하고 있어요. 잠시 후 다시 방문해 주세요.
             </p>
           )}
+          {(mode === "login" || mode === "signup") && (
+            <SocialLogin
+              disabled={isSubmitting}
+              onPendingChange={setSocialPending}
+            />
+          )}
           <form
             onSubmit={(event) => {
               void submit(event);
@@ -273,7 +281,10 @@ export function AuthPage({ mode }: { mode: Mode }) {
           >
             <fieldset
               disabled={
-                isSubmitting || !authClient || (mode === "reset" && loading)
+                isSubmitting ||
+                socialPending ||
+                !authClient ||
+                (mode === "reset" && loading)
               }
             >
               {mode === "signup" && (
@@ -329,6 +340,7 @@ export function AuthPage({ mode }: { mode: Mode }) {
                   <span className="auth-password">
                     <input
                       id="auth-password"
+                      aria-label={newPassword ? "새 비밀번호" : "비밀번호"}
                       type={visible ? "text" : "password"}
                       autoComplete={
                         newPassword ? "new-password" : "current-password"
@@ -352,7 +364,11 @@ export function AuthPage({ mode }: { mode: Mode }) {
                       })}
                       aria-invalid={!!errors.password}
                       aria-describedby={
-                        errors.password ? "password-error" : undefined
+                        errors.password
+                          ? "password-error"
+                          : newPassword
+                            ? "password-hint"
+                            : undefined
                       }
                     />
                     <button
@@ -365,6 +381,12 @@ export function AuthPage({ mode }: { mode: Mode }) {
                       {visible ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </span>
+                  {newPassword && (
+                    <span id="password-hint" className="auth-password-hint">
+                      12자 이상 입력해 주세요. 다른 서비스와 다른 비밀번호가
+                      좋아요.
+                    </span>
+                  )}
                   {errors.password && (
                     <span id="password-error" className="auth-field-error">
                       {errors.password.message}
@@ -417,7 +439,7 @@ export function AuthPage({ mode }: { mode: Mode }) {
           </form>
           {mode === "signup" && (
             <p className="auth-hint">
-              이메일 확인 후 가입이 완료돼요.
+              이메일로 가입하면 확인 메일을 보내드려요.
               <br />
               현재 캘린더 기록은 예시 데이터로 제공하고 있어요.
             </p>
@@ -439,48 +461,62 @@ export function AuthPage({ mode }: { mode: Mode }) {
 
 export function AuthCallback() {
   const navigate = useNavigate();
+  const [{ code, callbackError }] = useState(() => {
+    const query = new URLSearchParams(window.location.search);
+    const fragment = new URLSearchParams(window.location.hash.slice(1));
+    return {
+      code: query.get("code"),
+      callbackError: query.get("error") ?? fragment.get("error"),
+    };
+  });
   const [message, setMessage] = useState(() =>
-    !authClient || !new URLSearchParams(window.location.search).get("code")
-      ? "링크가 만료되었거나 사용할 수 없어요. 메일을 다시 요청해 주세요."
-      : "",
-  );
-  const [code] = useState(() =>
-    new URLSearchParams(window.location.search).get("code"),
+    callbackError === "access_denied"
+      ? "로그인이 취소되었어요. 원하시면 다시 시도해 주세요."
+      : callbackError
+        ? "로그인을 완료하지 못했어요. 잠시 후 다시 시도해 주세요."
+        : !authClient || !code
+          ? "링크가 만료되었거나 사용할 수 없어요. 로그인을 다시 시도하거나 메일을 다시 요청해 주세요."
+          : "",
   );
   useEffect(() => {
     let active = true;
     // Remove codes/errors before rendering links or making subsequent navigations.
     window.history.replaceState(window.history.state, "", "/auth/callback");
-    if (!code || !authClient) return;
+    if (!code || !authClient || callbackError) return;
     void exchangeCallback(code)
       .then(({ recovery, error }) => {
         if (!active) return;
         if (error)
           setMessage(
-            "링크를 확인하지 못했어요. 메일을 요청한 브라우저에서 가장 최근 링크를 열거나 다시 요청해 주세요.",
+            "인증을 완료하지 못했어요. 시작한 브라우저에서 로그인을 다시 시도하거나 가장 최근 확인 메일을 열어 주세요.",
           );
         else navigate(recovery ? "/auth/reset" : "/", { replace: true });
       })
       .catch(() => {
         if (active)
-          setMessage("링크를 확인하지 못했어요. 메일을 다시 요청해 주세요.");
+          setMessage(
+            "인증을 완료하지 못했어요. 연결을 확인하고 다시 시도해 주세요.",
+          );
       });
     return () => {
       active = false;
     };
-  }, [code, navigate]);
+  }, [code, callbackError, navigate]);
   return (
     <AuthLayout>
       <span className="auth-mail-icon">
         <Mail size={27} />
       </span>
-      <h2>{message ? "링크를 확인해 주세요" : "이메일을 확인하고 있어요"}</h2>
+      <h2>{message ? "인증을 확인해 주세요" : "인증을 완료하고 있어요"}</h2>
       <p role={message ? "alert" : "status"}>
         {message || "잠시만 기다려 주세요."}
       </p>
       {message && (
         <>
-          <Link className="auth-submit" to="/auth/resend">
+          <Link className="auth-submit" to="/auth/login">
+            로그인으로 돌아가기
+          </Link>
+          <Link className="auth-secondary" to="/auth/resend">
             가입 확인 메일 다시 받기
           </Link>
           <Link className="auth-secondary" to="/auth/forgot">
