@@ -1,0 +1,102 @@
+name: Native apps
+on:
+  pull_request:
+    paths:
+      - 'apps/web/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.nvmrc'
+      - 'scripts/ios-smoke.mjs'
+      - '.github/workflows/native-apps.yml'
+  push:
+    branches: [main, dev]
+    paths:
+      - 'apps/web/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.nvmrc'
+      - 'scripts/ios-smoke.mjs'
+      - '.github/workflows/native-apps.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  android:
+    name: Android debug build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: pnpm/setup@479c3cd2084b8e20207344a47dc10bdabea95adb # v3
+        with:
+          node-version-file: .nvmrc
+          require-lockfile: true
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Build and sync web assets
+        run: pnpm --filter web build && pnpm --filter web exec cap sync android
+      - name: Verify Android environment
+        run: |
+          java -version
+          test -d "$ANDROID_HOME/platforms/android-36"
+          apps/web/android/gradlew -p apps/web/android --version
+      - name: Build debug APK and run Android lint
+        working-directory: apps/web/android
+        run: ./gradlew --no-daemon assembleDebug lintDebug
+      - name: Save debug APK
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dayjoin-android-debug
+          path: apps/web/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
+  ios:
+    name: iOS simulator build and launch
+    runs-on: macos-26
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: pnpm/setup@479c3cd2084b8e20207344a47dc10bdabea95adb # v3
+        with:
+          node-version-file: .nvmrc
+          require-lockfile: true
+      - name: Build and sync web assets
+        run: pnpm --filter web build && pnpm --filter web exec cap sync ios
+      - name: Verify Xcode and CLI options
+        run: |
+          xcodebuild -version
+          xcrun simctl help bootstatus
+          xcrun simctl help launch
+          xcodebuild -list -project apps/web/ios/App/App.xcodeproj
+      - name: Build unsigned simulator app
+        run: >-
+          xcodebuild -quiet
+          -project apps/web/ios/App/App.xcodeproj
+          -scheme App
+          -configuration Debug
+          -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath "$RUNNER_TEMP/dayjoin-ios-build"
+          CODE_SIGNING_ALLOWED=NO
+          build
+      - name: Launch simulator and capture first screen
+        run: node scripts/ios-smoke.mjs "$RUNNER_TEMP/dayjoin-ios-build/Build/Products/Debug-iphonesimulator/App.app" "$RUNNER_TEMP/dayjoin-ios-smoke"
+      - name: Save simulator evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dayjoin-ios-smoke
+          path: ${{ runner.temp }}/dayjoin-ios-smoke
+          if-no-files-found: warn
+          retention-days: 7
