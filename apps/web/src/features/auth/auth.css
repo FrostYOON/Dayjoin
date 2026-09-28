@@ -328,3 +328,70 @@
     font-size: 16px;
   }
 }
+
+.auth-social {
+  margin-top: 24px;
+}
+.auth-social-buttons {
+  display: grid;
+  gap: 10px;
+}
+.auth-provider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 550;
+}
+.auth-provider svg {
+  flex-shrink: 0;
+}
+.auth-provider small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.auth-provider:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+.auth-provider:not(:disabled):hover {
+  background: var(--soft);
+}
+.auth-social-status {
+  margin-top: 10px;
+  font-size: 11px;
+  text-align: center;
+  color: var(--muted);
+}
+.auth-social-status .text-button {
+  font-size: inherit;
+}
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 23px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.auth-password-hint {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.7;
+}

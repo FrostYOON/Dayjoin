@@ -22,6 +22,7 @@ describe('Supabase token verification', () => {
   let unavailable: boolean;
   let removed: boolean;
   let publishedKeys: object[];
+  let metadata: Record<string, unknown>;
   const payload = () => ({
     iss: issuer,
     aud: 'authenticated',
@@ -46,6 +47,7 @@ describe('Supabase token verification', () => {
     unavailable = false;
     removed = false;
     publishedKeys = [publicKey];
+    metadata = { display_name: '지우', role: 'admin' };
     vi.stubGlobal(
       'fetch',
       vi.fn(async (input: string | URL) => {
@@ -65,7 +67,7 @@ describe('Supabase token verification', () => {
           id: userId,
           email: 'person@example.test',
           email_confirmed_at: confirmed ? '2026-09-27T00:00:00Z' : null,
-          user_metadata: { display_name: '지우', role: 'admin' },
+          user_metadata: metadata,
         });
       }),
     );
@@ -82,6 +84,20 @@ describe('Supabase token verification', () => {
       id: uid,
       email: 'person@example.test',
       displayName: '지우',
+    });
+  });
+  it.each([
+    [{ full_name: '  Google User  ', role: 'admin' }, 'Google User'],
+    [{ display_name: 'Chosen', full_name: 'Provider' }, 'Chosen'],
+    [{ full_name: null, name: 'Provider Name' }, 'Provider Name'],
+    [{ display_name: {}, full_name: 42, name: '' }, 'person'],
+    [{}, 'person'],
+  ])('uses safe social profile display names: %j', async (value, expected) => {
+    metadata = value as Record<string, unknown>;
+    await expect(service.authenticate(token())).resolves.toEqual({
+      id: uid,
+      email: 'person@example.test',
+      displayName: expected,
     });
   });
   it('rejects a token signed by another key', async () => {

@@ -94,7 +94,15 @@ export class AuthService {
       ) {
         throw new UnauthorizedException();
       }
-      const name: unknown = user.user_metadata.display_name;
+      // Provider metadata is only a display fallback, never authorization data.
+      const name = [
+        user.user_metadata.display_name,
+        user.user_metadata.full_name,
+        user.user_metadata.name,
+      ].find(
+        (value: unknown): value is string =>
+          typeof value === 'string' && !!value.trim(),
+      );
       return {
         id: user.id,
         email: user.email,
