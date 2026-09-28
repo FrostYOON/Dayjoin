@@ -30,6 +30,7 @@ Dayjoin은 일정과 계좌·카드·이체를 포함한 가계부를 한 캘린
 14. 20_THEME_AND_UI_CHECKPOINT.md — 시스템 테마·설정 저장, 최신 검증, 기존 의존성 보안 권고.
 15. 21_DEPENDENCY_SECURITY.md — Prisma 보안 보완·미사용 Mau 제거, 전체 감사와 실제 DB/Redis 검증.
 16. 22_MOBILE_SHELL.md — Capacitor 8.5.2 앱 생성, 실행 명령과 Xcode/Android 환경의 미완료 조건.
+17. 23_NATIVE_BUILD_VALIDATION.md — GitHub 실제 네이티브 빌드 및 iOS 첫 화면 확인, 남은 기기 조작 검증.
 
 ## 미완료 범위
 웹은 F-002의 React 달력·일정/가계부·계좌·카드·월 합계 화면이다. 예시 데이터만 메모리에 저장하며 새로고침하면 초기화된다. 업무 모델/migration/RLS, 로그인/JWT·초대·업무 권한, 도메인 기능·결제와 클라우드 배포는 없다. GitHub CI 통과 여부는 해당 커밋의 실행 결과로 판단한다.
@@ -65,3 +66,9 @@ D-001에서 가족·커플 대상과 **저녁식사·여행** 사례를 정리�
 Capacitor core/cli/ios/android 8.5.2를 CLI로 설치하고 iOS(SPM)·Android 프로젝트를 생성했다. 웹 build와 sync, 설정 검사, 기존 웹 회귀 검사를 통과했다. 개발 ID는 `com.frostyoon.dayjoin`이며 배포 등록 전 확정한다. iOS target 16.4/Android WebView 111은 Vite 출력과 맞춘 개발 기준이고 출시 지원 범위 검증이 아니다. uuid 전이 의존성의 제한된 override와 전체 audit를 적용했다.
 
 Xcode 27 약관 미동의로 Simulator 기기 조회가 막혔으며 사용자에게 직접 검토·동의를 요청했다. Android Studio/SDK/JDK도 준비되지 않았다. 앱 PR은 Draft로 보존하고 실제 네이티브 빌드·기기 조작을 완료로 기록하지 않는다. 사용자 응답 없이 약관에 동의하지 않는다. 자세한 명령/실패·수정/검증과 다음 실행 절차는 22_MOBILE_SHELL.md를 따른다. 인증/업무 저장은 아직 시작하지 않았다. 앞의 미설치·보안 권고 상태는 해당 작업 당시 기록이다.
+
+## 후속 네이티브 검증 · 2026-09-27
+
+사용자가 계속 진행을 요청했고 Xcode 설정 후 알려주기로 했다. 로컬 약관 상태는 미동의이며 Android 환경도 없다. `feature/mobile-shell` / PR #4에서 `Native apps` CI를 추가했다. 커밋 `842a00d`의 CI가 모두 통과했다. Android SDK 36 debug APK·lint, Xcode 26.6에서 iPhone 17 Pro / iOS 26.5 Simulator 빌드·설치·실행을 확인했다. 스크린샷에서 달력·공휴일·하단 메뉴 표시를 직접 확인했고 Android APK 안의 실제 웹 파일도 비교했다.
+
+전체 검사 결과·공식 근거·실행 기록과 캡처는 23_NATIVE_BUILD_VALIDATION.md를 따른다. 앱 PR은 Draft이며 P-010은 진행 중이다. 입력/키보드/뒤로가기/앱 복귀·실기기는 아직 미검증이다. 다음은 사용자가 Xcode 설정 완료를 알려주면 로컬 Simulator부터 다시 확인하는 것이다. 사용자 대신 약관에 동의하지 않으며 인증/업무 저장을 자동으로 시작하지 않는다.

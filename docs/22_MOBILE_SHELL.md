@@ -1,6 +1,6 @@
 # Capacitor 앱 구성 · P-010 진행 중
 
-확인일: 2026-09-27. 사용자의 다음 단계 진행 요청에 따라 UI/보안 PR을 dev에 통합한 뒤 `feature/mobile-shell`에서 앱 프로젝트를 생성했다. **웹 자산 빌드·동기화 완료, 네이티브 빌드와 기기 실행은 미검증**이다. 현재 업무 데이터는 메모리 예시이며 앱 재시작 시 초기화된다.
+확인일: 2026-09-27. 사용자의 다음 단계 진행 요청에 따라 UI/보안 PR을 dev에 통합한 뒤 `feature/mobile-shell`에서 앱 프로젝트를 생성했다. **웹 자산 동기화 및 CI 네이티브 빌드·iOS 첫 실행 완료, 기기 조작 검증은 진행 중**이다. 후속 [실제 네이티브 검증](23_NATIVE_BUILD_VALIDATION.md)의 최신 결과를 따른다. 아래 최초 생성 당시의 미검증 기록과 구분한다. 현재 업무 데이터는 메모리 예시이며 앱 재시작 시 초기화된다.
 
 ## 설치 버전과 선택 근거
 
@@ -20,7 +20,7 @@
 - 공식 CLI로 iOS Xcode 프로젝트와 Android Gradle 프로젝트 생성. 기본 앱 아이콘/스플래시는 템플릿 상태다.
 - `capacitor.config.ts`를 기존 Node용 TypeScript 검사에 포함.
 - 루트 `mobile:sync`, `mobile:ios`, `mobile:android` 명령 추가. 항상 웹을 빌드한 뒤 sync/run한다.
-- CI의 웹 build 이후 `cap sync`를 실행한다. Ubuntu에서 자산 복사/플랫폼 설정 생성만 확인하며 iOS/Android 네이티브 빌드 CI는 아직 없다.
+- CI의 웹 build 이후 `cap sync`를 실행한다. 기존 CI는 Ubuntu에서 자산 복사/플랫폼 설정 생성을 확인한다. 후속 `Native apps` workflow에 실제 Android/iOS 빌드와 iOS 첫 실행을 추가했으며 상세는 23_NATIVE_BUILD_VALIDATION.md를 따른다.
 - 생성된 Android 예시 테스트는 `2 + 2` 또는 잘못된 템플릿 package ID를 확인하므로 제거했다. 네이티브 테스트가 통과했다고 쓰지 않는다.
 - 웹 복사본·빌드 결과·기기별 설정·서명 비밀은 Git에서 제외한다. 필요한 네이티브 프로젝트, Gradle wrapper와 템플릿 자산은 추적한다.
 - 기존 safe-area/viewport 설정을 유지했다. 모달 키보드·뒤로가기·상태 표시줄·테마·앱 복귀는 기기 검증 후 보완한다.
@@ -62,7 +62,7 @@ plutil -lint apps/web/ios/App/App/Info.plist apps/web/ios/App/App.xcodeproj/proj
 
 - iOS: `xcrun simctl list devices available`가 Xcode 약관 미동의로 종료된다. 약관은 사용자가 Xcode에서 직접 검토·동의해야 한다. 동의 후 추가 컴포넌트와 iOS Simulator runtime을 준비하고 기기 목록부터 다시 확인한다.
 - Android: 기본 경로의 Android Studio/SDK가 없으며 `java_home -V`도 runtime 없음으로 응답했다. Android Studio를 설치하고 SDK Manager에서 API 36·Platform Tools·에뮬레이터를 준비한다. Studio의 Java 21 호환 JDK를 사용한다.
-- 두 플랫폼의 네이티브 컴파일, 시뮬레이터/에뮬레이터 실행, 실기기 설치·서명·스토어 제출은 수행하지 않았다. 앱 PR은 Draft로 유지하며 P-010 완료 체크를 하지 않는다.
+- 최초 생성 시 네이티브 검증은 미수행이었다. 후속 CI에서 두 플랫폼 컴파일과 iOS Simulator 첫 실행을 확인했다. 로컬/실기기 조작·Android 에뮬레이터 실행·배포 서명·스토어 제출은 아직 수행하지 않았다. 앱 PR은 Draft로 유지하며 P-010 완료 체크를 하지 않는다.
 
 도구 준비 후 이 브랜치 또는 관리형 worktree에서 실행한다:
 
