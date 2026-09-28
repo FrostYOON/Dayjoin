@@ -24,6 +24,10 @@ jobs:
         run: cp apps/api/.env.example apps/api/.env
       - name: Audit all dependencies
         run: pnpm audit
+      - name: Start isolated local Auth
+        run: pnpm auth:start
+      - name: Configure public local Auth values
+        run: pnpm auth:env
       - run: pnpm db:generate
       - run: pnpm db:validate
       - run: pnpm lint
@@ -33,6 +37,10 @@ jobs:
       - run: pnpm build
       - name: Start local dependencies
         run: docker compose --profile cache up -d --wait postgres redis
+      - name: Install Chromium for Auth checks
+        run: pnpm --filter web exec playwright install --with-deps chromium
+      - name: Verify signup, login and recovery with real local Auth
+        run: pnpm test:auth
       - name: Integration with Redis disabled
         run: pnpm test:integration
       - name: Integration with Redis enabled
@@ -43,6 +51,9 @@ jobs:
         run: docker compose --profile cache --profile app up -d --build --wait
         env:
           REDIS_ENABLED: "true"
+      - name: Stop local Auth
+        if: always()
+        run: pnpm auth:stop
       - name: Stop test containers
         if: always()
         run: docker compose --profile cache --profile app down
