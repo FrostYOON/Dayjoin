@@ -41,6 +41,9 @@ import {
   type Visibility,
 } from "./features/dayjoin/model.ts";
 import { EmptyState, Modal, RecordRow } from "./features/dayjoin/ui.tsx";
+import { Link } from "react-router";
+import { useAuth } from "./features/auth/context.ts";
+import { AccountPanel } from "./features/auth/AccountPanel.tsx";
 import "./App.css";
 
 type Page = "calendar" | "accounts" | "reports";
@@ -57,6 +60,8 @@ const navigation = [
 ] as const;
 
 function App() {
+  const auth = useAuth();
+  const [accountOpen, setAccountOpen] = useState(false);
   const [today] = useState(todayInSeoul);
   const [data, setData] = useState(() => createDemo(today));
   const [actor, setActor] = useState<Person>("jiwoo");
@@ -236,7 +241,8 @@ function App() {
             </div>
           </div>
           <div className="header-right">
-            <span className="preview-badge">미리보기</span>
+            {auth.session ? <button className="header-auth-link" onClick={() => setAccountOpen(true)}>내 계정</button>
+              : <Link className="header-auth-link" to="/auth/login">로그인</Link>}
             <button
               className="profile-button"
               onClick={() => setPanel({ kind: "demo" })}
@@ -464,6 +470,7 @@ function App() {
       >
         {status}
       </div>
+      {accountOpen && <AccountPanel onClose={() => setAccountOpen(false)} />}
       {panel?.kind === "entry" && (
         <RecordForm
           initial={panel.draft}

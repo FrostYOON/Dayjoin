@@ -8,3 +8,6 @@ coverage/
 .DS_Store
 .pnpm-store/
 .pnpm-cache/
+
+test-results/
+playwright-report/
