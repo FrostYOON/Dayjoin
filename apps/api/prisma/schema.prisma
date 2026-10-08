@@ -11,3 +11,81 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  displayName   String
+  passwordHash  String
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+}
+
+model AuthSession {
+  id           String   @id
+  userId       String
+  createdAt    DateTime
+  expiresAt    DateTime
+  lastActiveAt DateTime
+  mfa          String?
+  metadata     Json?
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model AuthEmailToken {
+  id          String   @id
+  purpose     String
+  userId      String
+  email       String
+  fingerprint String?
+  createdAt   DateTime
+  expiresAt   DateTime
+
+  @@index([userId, purpose])
+  @@index([expiresAt])
+}
+
+// Required by the official module's revocation contract, including password reset.
+// Token and MFA product endpoints are not enabled by this migration.
+model AuthRefreshToken {
+  id              String    @id
+  familyId        String
+  userId          String
+  createdAt       DateTime
+  expiresAt       DateTime
+  familyExpiresAt DateTime
+  usedAt          DateTime?
+  claims          Json?
+
+  @@index([userId])
+  @@index([familyId])
+}
+
+model AuthRevokedFamily {
+  id String @id
+}
+
+model AuthTotp {
+  userId        String  @id
+  secret        String
+  confirmed     Boolean
+  pendingSecret String?
+  lastUsedStep  Int?
+}
+
+model AuthRecoveryCode {
+  userId String
+  hash   String
+
+  @@id([userId, hash])
+}
+
+model AuthMfaFailure {
+  id     String   @id @default(uuid())
+  userId String
+  at     DateTime
+
+  @@index([userId, at])
+}

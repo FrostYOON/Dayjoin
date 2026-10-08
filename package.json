@@ -29,6 +29,8 @@
     "infra:up": "docker compose up -d --wait postgres",
     "infra:cache": "docker compose --profile cache up -d --wait postgres redis",
     "infra:down": "docker compose --profile cache --profile app down",
-    "test:integration": "node scripts/smoke.mjs"
+    "test:integration": "node scripts/smoke.mjs",
+    "test:auth": "pnpm --filter web test:auth",
+    "test:auth:setup": "node scripts/auth-test-setup.mjs"
   }
 }

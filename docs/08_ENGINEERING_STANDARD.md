@@ -69,7 +69,7 @@ Redis는 초기 비용·복잡도를 줄이기 위해 기본 비활성화한다.
 - API 이미지는 다단계 빌드, 비루트 실행, .env/캐시 제외, 고정된 Node·pnpm·lockfile을 사용한다.
 - Vite /api 프록시는 개발 서버 기능이다. 정적 배포에서는 별도 라우팅 또는 명시적 API URL + CORS allowlist를 구성해야 한다.
 - 현재는 개발 프록시로 같은 origin을 사용하며 CORS 허용 정책은 아직 구현하지 않았다. 운영 배포 전에 실제 도메인을 기준으로 적용한다.
-- 운영 후보는 Cloudflare 정적 호스팅 + Nest API 호스팅 + 관리형 PostgreSQL/Auth다. Supabase Auth는 다음 단계 후보이며 로컬 PostgreSQL이 인증 서버 역할을 대신하지 않는다.
+- 운영 후보는 Cloudflare 정적 호스팅 + Nest API 호스팅 + 관리형 PostgreSQL이다. 2026-10-07 인증 결정은 [Nest 공식 모듈](27_NEST_AUTH.md)이며 이전 Supabase Auth 후보/구현은 별도 브랜치의 이력으로 보존한다. 이번 인증은 API의 쿠키 세션과 PostgreSQL 저장소를 사용한다.
 - 클라우드 계약/유료 리소스/CD 연결은 아직 없다. 운영 전 TLS, secret 보관/회전, DB pool 한도, 로그 비식별화, 지표/오류 알림, 백업·복원 실험, migration/rollback 절차, 예산 알림을 확인한다.
 - 로컬 도구가 오픈소스여도 클라우드·도메인·메일·백업 운영이 계속 무료라고 가정하지 않는다.
 

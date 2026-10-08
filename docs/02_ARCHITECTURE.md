@@ -18,7 +18,7 @@
 | UI·폼 | Tailwind CSS, 필요한 shadcn/ui, React Hook Form + Zod | 폼과 오류 표시를 재사용. 서버 검증을 생략하는 근거로 쓰지 않음 |
 | 서버 상태 | TanStack Query | Nest REST API 조회/캐시, 로그아웃·작업 공간 변경 때 캐시 제거 |
 | DB·ORM | PostgreSQL + Prisma | 일반 CRUD와 트랜잭션. 잠금·RLS·CHECK·트리거는 필요한 SQL로 보완 |
-| 관리형 DB·인증 | Supabase PostgreSQL + Auth | 초기 운영 추천. Supabase는 DB/인증 제공, 업무 API는 Nest가 담당 |
+| 관리형 DB·인증 | 관리형 PostgreSQL + Nest 공식 인증 | 2026-10-07 인증 결정. 계정·세션·업무 API는 Nest가 담당 |
 | 중요 쓰기 | Nest application service + DB 트랜잭션 | 권한·멱등키·원장·알림 기록을 같은 트랜잭션으로 검증/반영 |
 | 외부 호출·예약 작업 | Nest 모듈 + DB outbox, 필요 시 @nestjs/schedule | 결제·이메일 비밀은 API 서버에만 보관. 초기 영속 작업 큐/별도 워커 없음. Redis는 선택적 캐시 profile |
 | 정적 호스팅 | Cloudflare Workers Static Assets + Wrangler | Vite 빌드 파일과 SPA fallback 배포 |
@@ -27,7 +27,7 @@
 | 테스트 | API: Vitest·Supertest, 웹: Vitest·Testing Library, E2E: Playwright | 실제 PostgreSQL에서 권한·원장·동시성·migration 검증 |
 | 개발·자동화 | 서비스별 Git 저장소, GitHub Actions, Markdown 백로그 | 작은 PR과 재현 가능한 검증. GitHub Issues/Projects는 필요할 때 사용 |
 
-인증 도입 시 브라우저는 Supabase Auth로 로그인하고 access token을 Nest API에 보낸다. **업무 데이터 조회와 변경은 모두 Nest를 통한다.** DB 비밀번호와 서버 비밀은 브라우저에 전달하지 않는다. 소개 페이지는 정적 HTML로 시작한다. 기본 Express 어댑터 선택은 [Nest 공식 안내](https://docs.nestjs.com/first-steps), Prisma 연결은 [Nest 가이드](https://docs.nestjs.com/recipes/prisma)를 참고한다.
+2026-10-07 인증 결정에 따라 브라우저는 Nest API로 로그인하고 HttpOnly 쿠키 세션을 사용한다. **업무 데이터 조회와 변경은 모두 Nest를 통한다.** DB 비밀번호와 서버 비밀은 브라우저에 전달하지 않는다. 소개 페이지는 정적 HTML로 시작한다. 기본 Express 어댑터 선택은 [Nest 공식 안내](https://docs.nestjs.com/first-steps), Prisma 연결은 [Nest 가이드](https://docs.nestjs.com/recipes/prisma)를 참고한다.
 
 ### 대안과 학습 범위
 
@@ -57,14 +57,14 @@ tests/e2e/
 docs/
 ```
 
-Prisma를 업무 스키마의 단일 migration 관리자로 쓴다. Supabase Auth 내부 스키마는 ORM 관리 대상에서 제외한다. RLS·CHECK·트리거 등 추가 SQL도 같은 migration 이력에서 관리한다. Prisma의 세대별 migration 형식/명령이 다를 수 있으므로, 착수 때 안정 버전과 공식 문서를 맞춰 **실제 경로·CLI·커넥션 방식**을 고정한다. 과거 튜토리얼의 명령을 그대로 운영에 적용하지 않는다. 첫 업무 스키마 구현 때 생성→빈 DB 적용→기존 DB 업그레이드→트랜잭션/잠금을 재현한다. 현재 연결 기반에는 업무 모델/migration/RLS가 없으며 이 검증은 후속 작업이다.
+Prisma를 업무 스키마의 단일 migration 관리자로 쓴다. 현재 계정·인증 저장소도 Prisma migration으로 관리한다. 이전 Supabase 내부 스키마는 현재 브랜치의 실행 경로에서 제외한다. RLS·CHECK·트리거 등 추가 SQL도 같은 migration 이력에서 관리한다. Prisma의 세대별 migration 형식/명령이 다를 수 있으므로, 착수 때 안정 버전과 공식 문서를 맞춰 **실제 경로·CLI·커넥션 방식**을 고정한다. 과거 튜토리얼의 명령을 그대로 운영에 적용하지 않는다. 첫 업무 스키마 구현 때 생성→빈 DB 적용→기존 DB 업그레이드→트랜잭션/잠금을 재현한다. 현재 연결 기반에는 업무 모델/migration/RLS가 없으며 이 검증은 후속 작업이다.
 
 ## 인증과 데이터 경계
 
 1. 이메일/비밀번호와 이메일 확인·재설정을 기본으로 한다. 외부 초대 전 별도 SMTP/발신 도메인을 준비한다. 소셜 로그인은 필요성 확인 후 추가한다.
-2. Nest Guard는 Supabase access token의 서명·issuer·audience·만료·subject를 JWKS/공식 검증 라이브러리로 검사한다. 키 회전을 지원하고 단순 decode를 인증으로 인정하지 않는다. 사용자 수정 가능 metadata를 역할 근거로 쓰지 않는다. [JWT 검증 안내](https://supabase.com/docs/guides/auth/jwts).
+2. Nest 공식 global guard가 쿠키 세션·만료·현재 회원을 검증한다. 원문 세션 토큰은 HttpOnly 쿠키에만 있고 DB에는 해시를 저장한다. 이메일 확인과 현재 비밀번호에 대한 세션 연결도 검사한다. [현재 인증 구현](27_NEST_AUTH.md).
 3. Guard가 인증한 사용자 ID와 요청한 작업 공간을 Service에 전달한다. 모든 읽기/쓰기에서 현재 DB 멤버십을 확인하고 객체가 해당 공간에 속하는지 검증한다. 금액·재고·권한 변경은 같은 트랜잭션에서 재확인한다.
-4. 업무 테이블은 노출하지 않는 전용 schema에 두고 Data API 노출 목록에서 제외한다. 브라우저의 anon/authenticated 역할에는 업무 테이블 조회·DML·명령 함수 실행 권한을 주지 않는다. Supabase service_role 키를 Nest의 일반 DB 접근 권한 대용으로 쓰지 않는다.
+4. 업무 테이블은 API 내부 DB 접근으로만 제공한다. 브라우저에 DB 역할·연결 비밀을 주거나 테이블을 직접 노출하지 않는다.
 5. API의 DB 계정은 비소유자·NOBYPASSRLS 최소 권한 계정으로 분리한다. 모든 업무 테이블에 RLS를 적용하며 테넌트 포함 FK/유일 제약을 병행한다. Prisma 연결만으로 사용자 RLS가 자동 적용된다고 가정하지 않는다.
 6. 읽기와 쓰기는 트랜잭션 helper를 통해 실행한다. 검증된 actor/tenant 값을 transaction-local `set_config(..., true)`로 설정하고, 그 트랜잭션의 client로만 쿼리한다. RLS 정책은 해당 사용자와 현재 DB 멤버십을 검증하며 tenant 값만 신뢰하지 않는다. 초기 멤버십 조회와 조직 생성의 정책도 별도로 설계하고 정책 간 재귀를 시험한다. pool 재사용 후 다른 사용자 문맥이 남지 않는지 반드시 검증한다.
 7. migration용 DB 소유자 계정은 배포 작업에서만 쓴다. P1 예약 작업은 대상 업무만 수행하는 별도 최소 권한 역할/정책으로 설계하고, 각 작업의 테넌트와 수신 자격을 재확인한다. 전 테이블 RLS 우회 계정을 일반 API에 공유하지 않는다.
@@ -80,8 +80,7 @@ outbox는 업무 변경과 같은 트랜잭션에 넣고 commit 후 처리한다
 
 ```mermaid
 flowchart LR
-    U[브라우저: React 캘린더] --> A[Supabase Auth]
-    U --> Q[Nest REST API: 인증과 업무 명령]
+    U[브라우저: React 캘린더] --> Q[Nest REST API: 쿠키 인증과 업무 명령]
     Q --> D[(Prisma 트랜잭션 / PostgreSQL + RLS)]
     D --> O[알림 outbox]
     O --> N[Nest scheduler와 이메일 모듈: P1]
