@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import {
@@ -27,12 +27,12 @@ const copy: Record<
   { title: string; description: string; button: string }
 > = {
   login: {
-    title: "다시 만나서 반가워요",
-    description: "오늘의 일정, 함께할 순간을 이어가요.",
+    title: "Dayjoin에 로그인",
+    description: "함께하는 일정과 나의 기록을 이어가요.",
     button: "로그인",
   },
   signup: {
-    title: "우리의 하루를 함께",
+    title: "Dayjoin 시작하기",
     description: "Dayjoin에서 나의 계정을 만들어 보세요.",
     button: "회원가입",
   },
@@ -120,12 +120,15 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
 
 export function AuthPage({ mode }: { mode: Mode }) {
   const { loading, refresh } = useAuth();
+  const heading = useRef<HTMLHeadingElement>(null);
   const [token] = useState(() =>
     new URLSearchParams(window.location.search).get("token"),
   );
   useEffect(() => {
     if (mode === "reset")
       window.history.replaceState(window.history.state, "", "/auth/reset");
+    window.scrollTo(0, 0);
+    heading.current?.focus({ preventScroll: true });
   }, [mode]);
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
@@ -224,23 +227,9 @@ export function AuthPage({ mode }: { mode: Mode }) {
         </div>
       ) : (
         <>
-          {(mode === "login" || mode === "signup") && (
-            <nav className="auth-tabs" aria-label="계정 시작">
-              <Link
-                to="/auth/login"
-                aria-current={mode === "login" ? "page" : undefined}
-              >
-                로그인
-              </Link>
-              <Link
-                to="/auth/signup"
-                aria-current={mode === "signup" ? "page" : undefined}
-              >
-                회원가입
-              </Link>
-            </nav>
-          )}
-          <h2>{copy[mode].title}</h2>
+          <h2 ref={heading} tabIndex={-1}>
+            {copy[mode].title}
+          </h2>
           <p className="auth-description">{copy[mode].description}</p>
           {(mode === "login" || mode === "signup") && <SocialLogin />}
           <form
@@ -406,15 +395,25 @@ export function AuthPage({ mode }: { mode: Mode }) {
               현재 캘린더 기록은 예시 데이터로 제공하고 있어요.
             </p>
           )}
+          {(mode === "login" || mode === "signup") && (
+            <p className="auth-switch">
+              <span>
+                {mode === "login" ? "처음이신가요?" : "이미 계정이 있나요?"}
+              </span>
+              <Link to={mode === "login" ? "/auth/signup" : "/auth/login"}>
+                {mode === "login" ? "회원가입" : "로그인"}
+              </Link>
+            </p>
+          )}
           {mode === "login" ? (
             <Link className="auth-secondary" to="/auth/resend">
               가입 확인 메일을 받지 못했어요
             </Link>
-          ) : (
+          ) : mode !== "signup" ? (
             <Link className="auth-secondary" to="/auth/login">
               로그인으로 돌아가기
             </Link>
-          )}
+          ) : null}
         </>
       )}
     </AuthLayout>

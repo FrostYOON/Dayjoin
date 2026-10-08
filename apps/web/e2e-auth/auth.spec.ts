@@ -46,7 +46,9 @@ test("signup, deliberate email verification, persistent HttpOnly login, logout a
 }) => {
   const email = "browser-" + randomUUID() + "@example.test";
   const password = "dayjoin-browser-password";
-  await page.goto("/auth/signup");
+  await page.goto("/auth/login");
+  await page.getByRole("link", { name: "회원가입", exact: true }).click();
+  await expect(page).toHaveURL(/\/auth\/signup$/);
   await page.getByLabel("이름", { exact: true }).fill("브라우저 테스트");
   await page.getByLabel("이메일", { exact: true }).fill(email);
   await page.getByLabel("새 비밀번호", { exact: true }).fill(password);
