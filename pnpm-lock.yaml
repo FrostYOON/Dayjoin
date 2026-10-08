@@ -206,17 +206,17 @@ settings:
 overrides:
   '@prisma/config@7.10.0>deepmerge-ts': 8.0.0
   prisma@7.10.0>mysql2: 3.23.1
+  source-map-js@1.2.1: 1.2.2
 
 importers:
 
-  .:
-    devDependencies:
-      supabase:
-        specifier: 2.118.0
-        version: 2.118.0
+  .: {}
 
   apps/api:
     dependencies:
+      '@nestjs/authentication':
+        specifier: 0.0.1
+        version: 0.0.1(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/common':
         specifier: ^12.0.1
         version: 12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0)
@@ -226,21 +226,24 @@ importers:
       '@nestjs/core':
         specifier: ^12.0.1
         version: 12.1.0(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/mail':
+        specifier: 0.0.1
+        version: 0.0.1(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/platform-express':
         specifier: ^12.0.1
         version: 12.1.0(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(supports-color@7.2.0)
       '@nestjs/terminus':
         specifier: 12.1.0
         version: 12.1.0(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(@prisma/client@7.10.0(prisma@7.10.0(@types/node@24.13.6)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(magicast@0.5.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3))(typescript@6.0.3))(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/throttler':
+        specifier: 6.7.1
+        version: 6.7.1(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(reflect-metadata@0.2.2)
       '@prisma/adapter-pg':
         specifier: 7.10.0
         version: 7.10.0
       '@prisma/client':
         specifier: 7.10.0
         version: 7.10.0(prisma@7.10.0(@types/node@24.13.6)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(magicast@0.5.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3))(typescript@6.0.3)
-      '@supabase/supabase-js':
-        specifier: 2.117.2
-        version: 2.117.2
       class-transformer:
         specifier: 0.5.1
         version: 0.5.1
@@ -323,9 +326,6 @@ importers:
       '@radix-ui/react-select':
         specifier: 2.3.7
         version: 2.3.7(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-      '@supabase/supabase-js':
-        specifier: 2.117.2
-        version: 2.117.2
       lucide-react:
         specifier: 1.48.0
         version: 1.48.0(react@19.3.0)
@@ -433,12 +433,6 @@ packages:
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
     engines: {node: '>=0.1.90'}
-
-  '@ecies/ciphers@0.2.6':
-    resolution: {integrity: sha512-patgsRPKGkhhoBjETV4XxD0En4ui5fbX0hzayqI3M8tvNMGUoUvmyYAIWwlxBc1KX5cturfqByYdj5bYGRpN9g==}
-    engines: {bun: '>=1', deno: '>=2.7.10', node: '>=16'}
-    peerDependencies:
-      '@noble/ciphers': ^1.0.0
 
   '@electric-sql/pglite-socket@0.1.3':
     resolution: {integrity: sha512-LAciWM0M1dCL8hlsxu2venbVZcdxema0BtDfpWYVqr+Y468UADw0pFWidhKw1M8sfJ8rdLT71tjMmnirf/IZRQ==}
@@ -639,6 +633,22 @@ packages:
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
 
+  '@nestjs/authentication@0.0.1':
+    resolution: {integrity: sha512-slL8wfbkxEwVguVzSNQ69roUx5sVXV8/TEfuPXJRaInB4F1dqquuLAB525KIFW6xSrByQXrUilR50Ijwesraag==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@nestjs/common': ^12.0.0
+      '@nestjs/core': ^12.0.0
+      '@nestjs/microservices': ^12.0.0
+      '@nestjs/websockets': ^12.0.0
+      reflect-metadata: ^0.1.13 || ^0.2.0
+      rxjs: ^7.1.0
+    peerDependenciesMeta:
+      '@nestjs/microservices':
+        optional: true
+      '@nestjs/websockets':
+        optional: true
+
   '@nestjs/cli@12.0.7':
     resolution: {integrity: sha512-yKCDYZvBJo/e/8Dmr2ajcIOXIbwyhs6/WcMVkf3MEPqVtSJtdN2mVRY0kivJYE2Ixidg8tA3tX+NUr6enOdUIg==}
     engines: {node: '>= 20.11'}
@@ -706,6 +716,15 @@ packages:
         optional: true
       '@nestjs/websockets':
         optional: true
+
+  '@nestjs/mail@0.0.1':
+    resolution: {integrity: sha512-5nYcSp1A/MCx8Qqm/T7RVm2NqUVgJmw0xJ04Vj07TtpPy0YARDbW7FnE9x77Y3EKgGjMuw2lBIe+W9mRaMZArA==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@nestjs/common': ^11.0.0 || ^12.0.0
+      '@nestjs/core': ^11.0.0 || ^12.0.0
+      reflect-metadata: ^0.1.13 || ^0.2.0
+      rxjs: ^7.1.0
 
   '@nestjs/platform-express@12.1.0':
     resolution: {integrity: sha512-LOyutflFXjV+ahGKpcje9x1BFSVj9GjOE7kU1kGpI3P+NBzEf3dnsES/fmGuW8R7gV11VJlRz7u+3wYbda5/xg==}
@@ -788,13 +807,13 @@ packages:
       '@nestjs/platform-express':
         optional: true
 
-  '@noble/ciphers@1.3.0':
-    resolution: {integrity: sha512-2I0gnIVPtfnMw9ee9h1dJG7tp81+8Ob3OJb3Mv37rx5L40/b0i7djjCVvGOVqc9AEIQyvyu1i6ypKdFw8R8gQw==}
-    engines: {node: ^14.21.3 || >=16}
-
-  '@noble/curves@1.9.7':
-    resolution: {integrity: sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==}
-    engines: {node: ^14.21.3 || >=16}
+  '@nestjs/throttler@6.7.1':
+    resolution: {integrity: sha512-gAyY1AkU+cSK5DCjFOB43xax9oakameH4xZa9kAgqBqSBQZgmv3DZylLV8KyZNzOGhceL3kDVtby+CF8VAdmEA==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
+    peerDependencies:
+      '@nestjs/common': ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
+      '@nestjs/core': ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
+      reflect-metadata: ^0.1.13 || ^0.2.0
 
   '@noble/hashes@1.8.0':
     resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
@@ -1501,82 +1520,6 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@supabase/auth-js@2.117.2':
-    resolution: {integrity: sha512-Z3WnGwrphYZubrLbxp5Iv0tLA9A5GhvKzJ/ZXglxqwd2QEH2R4dXRltjVJ8sIn4xEW2BSFIGT0yALVJIgZeDYw==}
-    engines: {node: '>=22.0.0'}
-
-  '@supabase/cli-darwin-arm64@2.118.0':
-    resolution: {integrity: sha512-48W7wkHIVNgwSz4zr+xsC94la1PytCpudOw5w9qJWAISyBWRXMFBCEMb9aVIEG8S9OcLb4X1KZy4PPA/T+f7NQ==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@supabase/cli-darwin-x64@2.118.0':
-    resolution: {integrity: sha512-r6z41S0ycJiy2cO6sbJA7kPCodpAus6b3Km+qyn2zYlnTLN0nbscYnKxrZf/rJNR+S+sdpOZXgdQjGc/z5jvXw==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@supabase/cli-linux-arm64-musl@2.118.0':
-    resolution: {integrity: sha512-8yXIa+9g3FVVlnUAZ9wB1NEP6kvO0tpqQkDs3wqmb6btLD1MYosD/2/ZazSkpEHiKOwKUSymvUg0OgqI7a1gpw==}
-    cpu: [arm64]
-    os: [linux]
-    libc: [musl]
-
-  '@supabase/cli-linux-arm64@2.118.0':
-    resolution: {integrity: sha512-gYjOTnsYgwC68suoFALaXo87KvluXMjdWuo26a7hyD8vLeRJrmX+dpdxgegckQ7wxz8V1iotSBQU6Hd44FEDqw==}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  '@supabase/cli-linux-x64-musl@2.118.0':
-    resolution: {integrity: sha512-baHVTKJ8OehCXIt6pjHFRXofoUqQzve+43lRKKeVlcgDmgHHTTaF/wTpNvQ86IhoDRkiQTuHQkDG8I5GtHdvEA==}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
-
-  '@supabase/cli-linux-x64@2.118.0':
-    resolution: {integrity: sha512-nHm27uv15iu4xIQZRC++CS4uKYU9HuFn9HiOf407620OQ3cCp70fLT59grFlYQ+bqM7Zrv/GmEZHdgR8UO65RA==}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  '@supabase/cli-windows-arm64@2.118.0':
-    resolution: {integrity: sha512-wd592HmQQ7DsGjnwDHILJfFlsRBQ8Q6wwjX5AXRmqznsj3NOPfFzZm2GtV8hJIj1Ttsf7B8N1DqW/0ta7kU4oQ==}
-    cpu: [arm64]
-    os: [win32]
-
-  '@supabase/cli-windows-x64@2.118.0':
-    resolution: {integrity: sha512-qVAJL532b5pB8uJAPA/+3+wtwM/DX1GxwVLCSDmiT6wfUBD6OJcCYRXCEaUx0YjupyaDoPeuP4BF7IfkQTajww==}
-    cpu: [x64]
-    os: [win32]
-
-  '@supabase/functions-js@2.117.2':
-    resolution: {integrity: sha512-6DT4ZIjmZxa9ANKaBIrjc86AyKrX8M376ynvNeOBBVad3eP7x3UHqWfDR2ynFkHGzCuOpr1A+kObmnahxuwuog==}
-    engines: {node: '>=22.0.0'}
-
-  '@supabase/phoenix@0.4.5':
-    resolution: {integrity: sha512-aAn9H9ovVyeApKy11OWOrrOGq8DV68yWeH4ud2lN9fzn4aO8Zb5GLL9m1pUg9nLqIcT+ZDfAcsZe0E/nqdv2lw==}
-
-  '@supabase/postgrest-js@2.117.2':
-    resolution: {integrity: sha512-V1Qhn+M8xzJqCasOxHZ2KG19Fj39PxU7weEAmOK65/KTsWCRXboB4hcQwFvxRvM7ZikeP9IZWNvQkfjvSxzYFw==}
-    engines: {node: '>=22.0.0'}
-
-  '@supabase/realtime-js@2.117.2':
-    resolution: {integrity: sha512-lYXSAIg3eAKA58riUED6Vb+TCzF8jtx18uOoiCaVJ7ZMre6FWBpwB1MPeW+B6vykJT/hPdiuqwcSB7ILMS21ew==}
-    engines: {node: '>=22.0.0'}
-
-  '@supabase/storage-js@2.117.2':
-    resolution: {integrity: sha512-8gAJoVaxZa/War2kFRfJMxGk4M190Q7lJ70BofwGlRxU/u9pIodd6XyTvmXkxOKXWuIYtkDaYPZrIAUt1T/7FQ==}
-    engines: {node: '>=22.0.0'}
-
-  '@supabase/supabase-js@2.117.2':
-    resolution: {integrity: sha512-eSG2VKnHR+Clp1PmidZ1/weJ8PJwoybjva3L2GgKqFG4YDS1Iqmc61psKGZP5xw6OMT2O7ZorPR42PY6q1BOXg==}
-    engines: {node: '>=22.0.0'}
-    peerDependencies:
-      '@opentelemetry/api': '>=1.0.0'
-    peerDependenciesMeta:
-      '@opentelemetry/api':
-        optional: true
-
   '@tokenizer/inflate@0.4.1':
     resolution: {integrity: sha512-2mAv+8pkG6GIZiF1kNg1jAjh27IDxEPKwdGul3snfztFerfPGI1LjDezZp3i7BElXompqEtPmoPx6c2wgtWsOA==}
     engines: {node: '>=18'}
@@ -2096,10 +2039,6 @@ packages:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
     engines: {node: '>= 0.4'}
 
-  eciesjs@0.5.0:
-    resolution: {integrity: sha512-s0J9SEVYAEPg7J63GFMApLYzPH9VNIQIyC6s15JpnqVc0TqcKWdbgFlnAweEBRyMmko2dcs2sfC83Hj4J43tuA==}
-    engines: {bun: '>=1', deno: '>=2.7.10', node: '>=16'}
-
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
@@ -2318,10 +2257,6 @@ packages:
     resolution: {integrity: sha512-4FbRdAX+bSdmo4AUFuS0WNiPz8NgFt+r8ThgNWmlrjQjt1Q7ZR9+zTlce2859x4KSXrwIsaeTqDoKQmtP8pLmQ==}
     engines: {node: '>= 0.8'}
 
-  iceberg-js@0.8.1:
-    resolution: {integrity: sha512-1dhVQZXhcHje7798IVM+xoo/1ZdVfzOMIc8/rgVSijRK38EDqOJoGula9N/8ZI5RD8QTxNQtK/Gozpr+qUqRRA==}
-    engines: {node: '>=20.0.0'}
-
   iconv-lite@0.7.3:
     resolution: {integrity: sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==}
     engines: {node: '>=0.10.0'}
@@ -2380,9 +2315,6 @@ packages:
   jiti@2.7.0:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
-
-  jose@6.2.12:
-    resolution: {integrity: sha512-9NiFmJEex0sy2Dk58j2UGBSHgUs2ypF9eZSu4L6vjOX3Dp96Sw1F3uL+H+D1sx02jZZdzUT0HgvCy59CuvXcWw==}
 
   js-tokens@10.0.0:
     resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
@@ -2971,8 +2903,8 @@ packages:
     resolution: {integrity: sha512-kUMbT1oBJCpgrnKoSr0o6wPtvRWT9W9UKvGLwfJYO2WuahZRHOpEyL1ckyMGgMWh0UdpmaoFqKKD29WTomNEGA==}
     engines: {node: '>=8'}
 
-  source-map-js@1.2.1:
-    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
+  source-map-js@1.2.2:
+    resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
 
   source-map-support@0.5.21:
@@ -3042,10 +2974,6 @@ packages:
   strtok3@10.3.5:
     resolution: {integrity: sha512-ki4hZQfh5rX0QDLLkOCj+h+CVNkqmp/CMf8v8kZpkNVK6jGQooMytqzLZYUVYIZcFZ6yDB70EfD8POcFXiF5oA==}
     engines: {node: '>=18'}
-
-  supabase@2.118.0:
-    resolution: {integrity: sha512-0aPIlzBSBLwbJZCMZKD1QAwlc4xNnNvvk07QuSuuKBKzGLSeV3GovgTLlMKFTJ4JWfJubWF0URPLuPUr0kZr5g==}
-    hasBin: true
 
   superagent@10.4.1:
     resolution: {integrity: sha512-PVMkMrhKrSTtFhUU8jiWuGh/gyRMKiyCTCmm0+qVzRNxlfntmRKJkDhlEXN62x3HIb33sQ4kmL8lcSdccWAchQ==}
@@ -3350,10 +3278,6 @@ snapshots:
   '@colors/colors@1.5.0':
     optional: true
 
-  '@ecies/ciphers@0.2.6(@noble/ciphers@1.3.0)':
-    dependencies:
-      '@noble/ciphers': 1.3.0
-
   '@electric-sql/pglite-socket@0.1.3(@electric-sql/pglite@0.4.3)':
     dependencies:
       '@electric-sql/pglite': 0.4.3
@@ -3530,6 +3454,13 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
+  '@nestjs/authentication@0.0.1(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0)
+      '@nestjs/core': 12.1.0(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.2
+
   '@nestjs/cli@12.0.7(@types/node@24.13.6)(prettier@3.9.9)':
     dependencies:
       '@angular-devkit/core': 22.2.0(chokidar@5.0.0)
@@ -3589,6 +3520,13 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 12.1.0(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(supports-color@7.2.0)
 
+  '@nestjs/mail@0.0.1(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0)
+      '@nestjs/core': 12.1.0(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.2
+
   '@nestjs/platform-express@12.1.0(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(supports-color@7.2.0)':
     dependencies:
       '@nestjs/common': 12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0)
@@ -3631,11 +3569,11 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 12.1.0(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(supports-color@7.2.0)
 
-  '@noble/ciphers@1.3.0': {}
-
-  '@noble/curves@1.9.7':
+  '@nestjs/throttler@6.7.1(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.0)(reflect-metadata@0.2.2)':
     dependencies:
-      '@noble/hashes': 1.8.0
+      '@nestjs/common': 12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0)
+      '@nestjs/core': 12.1.0(@nestjs/common@12.1.0(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      reflect-metadata: 0.2.2
 
   '@noble/hashes@1.8.0': {}
 
@@ -4181,62 +4119,6 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@supabase/auth-js@2.117.2':
-    dependencies:
-      tslib: 2.8.1
-
-  '@supabase/cli-darwin-arm64@2.118.0':
-    optional: true
-
-  '@supabase/cli-darwin-x64@2.118.0':
-    optional: true
-
-  '@supabase/cli-linux-arm64-musl@2.118.0':
-    optional: true
-
-  '@supabase/cli-linux-arm64@2.118.0':
-    optional: true
-
-  '@supabase/cli-linux-x64-musl@2.118.0':
-    optional: true
-
-  '@supabase/cli-linux-x64@2.118.0':
-    optional: true
-
-  '@supabase/cli-windows-arm64@2.118.0':
-    optional: true
-
-  '@supabase/cli-windows-x64@2.118.0':
-    optional: true
-
-  '@supabase/functions-js@2.117.2':
-    dependencies:
-      tslib: 2.8.1
-
-  '@supabase/phoenix@0.4.5': {}
-
-  '@supabase/postgrest-js@2.117.2':
-    dependencies:
-      tslib: 2.8.1
-
-  '@supabase/realtime-js@2.117.2':
-    dependencies:
-      '@supabase/phoenix': 0.4.5
-      tslib: 2.8.1
-
-  '@supabase/storage-js@2.117.2':
-    dependencies:
-      iceberg-js: 0.8.1
-      tslib: 2.8.1
-
-  '@supabase/supabase-js@2.117.2':
-    dependencies:
-      '@supabase/auth-js': 2.117.2
-      '@supabase/functions-js': 2.117.2
-      '@supabase/postgrest-js': 2.117.2
-      '@supabase/realtime-js': 2.117.2
-      '@supabase/storage-js': 2.117.2
-
   '@tokenizer/inflate@0.4.1(supports-color@7.2.0)':
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
@@ -4777,13 +4659,6 @@ snapshots:
       es-errors: 1.3.0
       gopd: 1.2.0
 
-  eciesjs@0.5.0:
-    dependencies:
-      '@ecies/ciphers': 0.2.6(@noble/ciphers@1.3.0)
-      '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
-
   ee-first@1.1.1: {}
 
   effect@3.20.0:
@@ -5015,8 +4890,6 @@ snapshots:
       statuses: 2.0.2
       toidentifier: 1.0.1
 
-  iceberg-js@0.8.1: {}
-
   iconv-lite@0.7.3:
     dependencies:
       safer-buffer: 2.1.2
@@ -5057,8 +4930,6 @@ snapshots:
   iterare@1.2.1: {}
 
   jiti@2.7.0: {}
-
-  jose@6.2.12: {}
 
   js-tokens@10.0.0: {}
 
@@ -5152,7 +5023,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.29.9
       '@babel/types': 7.29.8
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   make-dir@4.0.0:
     dependencies:
@@ -5366,7 +5237,7 @@ snapshots:
     dependencies:
       nanoid: 3.3.19
       picocolors: 1.1.1
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   postgres-array@2.0.0: {}
 
@@ -5628,7 +5499,7 @@ snapshots:
     dependencies:
       unicode-emoji-modifier-base: 1.0.0
 
-  source-map-js@1.2.1: {}
+  source-map-js@1.2.2: {}
 
   source-map-support@0.5.21:
     dependencies:
@@ -5681,20 +5552,6 @@ snapshots:
   strtok3@10.3.5:
     dependencies:
       '@tokenizer/token': 0.3.0
-
-  supabase@2.118.0:
-    dependencies:
-      eciesjs: 0.5.0
-      jose: 6.2.12
-    optionalDependencies:
-      '@supabase/cli-darwin-arm64': 2.118.0
-      '@supabase/cli-darwin-x64': 2.118.0
-      '@supabase/cli-linux-arm64': 2.118.0
-      '@supabase/cli-linux-arm64-musl': 2.118.0
-      '@supabase/cli-linux-x64': 2.118.0
-      '@supabase/cli-linux-x64-musl': 2.118.0
-      '@supabase/cli-windows-arm64': 2.118.0
-      '@supabase/cli-windows-x64': 2.118.0
 
   superagent@10.4.1(supports-color@7.2.0):
     dependencies:

@@ -1,13 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  authClient,
-  authError,
-  callbackUrl,
-  getSocialProviders,
-  type SocialProvider,
-  type SocialProviders,
-} from "./client.ts";
-
+import type { SocialProvider } from "./social-types.ts";
 const names = { google: "Google", apple: "Apple" } as const;
 
 function ProviderIcon({ provider }: { provider: SocialProvider }) {
@@ -43,67 +34,7 @@ function ProviderIcon({ provider }: { provider: SocialProvider }) {
   );
 }
 
-export function SocialLogin({
-  disabled,
-  onPendingChange,
-}: {
-  disabled: boolean;
-  onPendingChange: (pending: boolean) => void;
-}) {
-  const [providers, setProviders] = useState<SocialProviders | null>(null);
-  const [settingsError, setSettingsError] = useState(false);
-  const [attempt, setAttempt] = useState(0);
-  const [pending, setPending] = useState<SocialProvider | null>(null);
-  const [error, setError] = useState("");
-  const inFlight = useRef(false);
-  useEffect(() => {
-    const controller = new AbortController();
-    void getSocialProviders(controller.signal)
-      .then((available) => {
-        if (!controller.signal.aborted) setProviders(available);
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) setSettingsError(true);
-      });
-    return () => controller.abort();
-  }, [attempt]);
-
-  useEffect(() => {
-    // A cancelled provider visit can return via the browser's back/forward
-    // cache, preserving the pending UI from before the redirect.
-    const resume = (event: PageTransitionEvent) => {
-      if (!event.persisted) return;
-      inFlight.current = false;
-      setPending(null);
-      onPendingChange(false);
-    };
-    window.addEventListener("pageshow", resume);
-    return () => window.removeEventListener("pageshow", resume);
-  }, [onPendingChange]);
-
-  async function signIn(provider: SocialProvider) {
-    if (!authClient || !providers?.[provider] || disabled || inFlight.current)
-      return;
-    inFlight.current = true;
-    setPending(provider);
-    onPendingChange(true);
-    setError("");
-    try {
-      // The SDK generates/stores the PKCE verifier and redirects to Supabase.
-      // No provider secrets or calendar scopes are needed by this browser.
-      const { error } = await authClient.auth.signInWithOAuth({
-        provider,
-        options: { redirectTo: callbackUrl() },
-      });
-      if (error) throw error;
-    } catch (cause) {
-      setError(authError(cause));
-      setPending(null);
-      onPendingChange(false);
-      inFlight.current = false;
-    }
-  }
-
+export function SocialLogin() {
   return (
     <div className="auth-social">
       <div
@@ -115,53 +46,17 @@ export function SocialLogin({
           <button
             key={provider}
             type="button"
-            className={`auth-provider auth-provider-${provider}`}
-            aria-label={`${names[provider]}로 계속하기`}
-            disabled={
-              disabled || !!pending || !authClient || !providers?.[provider]
-            }
-            onClick={() => {
-              void signIn(provider);
-            }}
+            className={"auth-provider auth-provider-" + provider}
+            aria-label={names[provider] + "로 계속하기"}
+            disabled
           >
             <ProviderIcon provider={provider} />
-            <span>
-              {pending === provider
-                ? "연결하고 있어요…"
-                : `${names[provider]}로 계속하기`}
-            </span>
-            {providers && !providers[provider] && <small>준비 중</small>}
+            <span>{names[provider]}로 계속하기</span>
+            <small>준비 중</small>
           </button>
         ))}
       </div>
-      {settingsError ? (
-        <p className="auth-social-status" role="status">
-          간편 로그인 상태를 불러오지 못했어요.{" "}
-          <button
-            type="button"
-            className="text-button"
-            onClick={() => {
-              setSettingsError(false);
-              setAttempt((value) => value + 1);
-            }}
-          >
-            다시 시도
-          </button>
-        </p>
-      ) : !providers ? (
-        <p className="auth-social-status" role="status">
-          간편 로그인을 확인하고 있어요…
-        </p>
-      ) : !providers.google || !providers.apple ? (
-        <p className="auth-social-status">
-          준비 중인 로그인 방식은 아직 이용할 수 없어요.
-        </p>
-      ) : null}
-      {error && (
-        <p role="alert" className="auth-error">
-          {error}
-        </p>
-      )}
+      <p className="auth-social-status">구글·애플 로그인은 준비 중이에요.</p>
       <div className="auth-divider">
         <span>또는 이메일로 계속하기</span>
       </div>

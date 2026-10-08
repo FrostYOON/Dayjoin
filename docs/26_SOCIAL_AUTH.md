@@ -1,5 +1,7 @@
 # 구글·애플 로그인과 인증 설정
 
+> 과거 Supabase 브랜치/PR #6의 구현 기록이다. 현재 feature/nest-auth는 [Nest 공식 인증 기록](27_NEST_AUTH.md)을 따르며 아래 실행 명령은 이전 브랜치에서만 유효하다.
+
 확인일: 2026-09-28 (America/Toronto). 기존 `feature/email-auth` / PR #6에 이어 구현한다. 실제 외부 프로젝트 생성·OAuth 자격증명 등록·운영 메일 발송은 아직 수행하지 않았다.
 
 ## 적용한 범위

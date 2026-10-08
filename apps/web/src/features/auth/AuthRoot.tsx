@@ -3,16 +3,16 @@ import { lazy, Suspense } from "react";
 import "../../App.css";
 import { AuthProvider } from "./AuthProvider.tsx";
 import { useAuth } from "./context.ts";
-import { AuthCallback, AuthPage } from "./AuthPage.tsx";
+import { AuthCallback, AuthPage, VerifyEmail } from "./AuthPage.tsx";
 
 const App = lazy(() => import("../../App.tsx"));
 
 function Calendar() {
-  const { session } = useAuth();
+  const { user } = useAuth();
   // A changed identity destroys all calendar preview state and open drafts.
   return (
     <Suspense fallback={<p role="status">캘린더를 불러오고 있어요…</p>}>
-      <App key={session?.user.id ?? "guest"} />
+      <App key={user?.id ?? "guest"} />
     </Suspense>
   );
 }
@@ -42,6 +42,7 @@ export function AuthRoot() {
             path="/auth/reset"
             element={<AuthPage key="reset" mode="reset" />}
           />
+          <Route path="/auth/verify" element={<VerifyEmail />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

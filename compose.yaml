@@ -36,6 +36,10 @@ services:
     environment:
       NODE_ENV: production
       PORT: "3000"
+      APP_URL: https://dayjoin.local
+      MAIL_FROM: hello@dayjoin.test
+      # Placeholder for local image startup only; configure a real SMTP provider before release.
+      SMTP_URL: smtps://smtp.example.invalid:465
       DATABASE_URL: postgresql://dayjoin_app:local_app_only@postgres:5432/dayjoin
       REDIS_ENABLED: ${REDIS_ENABLED:-false}
       REDIS_URL: redis://redis:6379

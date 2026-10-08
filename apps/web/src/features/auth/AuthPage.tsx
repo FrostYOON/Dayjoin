@@ -10,12 +10,7 @@ import {
   EyeOff,
   Mail,
 } from "lucide-react";
-import {
-  authClient,
-  authError,
-  callbackUrl,
-  exchangeCallback,
-} from "./client.ts";
+import { authRequest, authError } from "./client.ts";
 import { useAuth } from "./context.ts";
 import { SocialLogin } from "./SocialLogin.tsx";
 import "./auth.css";
@@ -124,12 +119,18 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
 }
 
 export function AuthPage({ mode }: { mode: Mode }) {
-  const { session, loading } = useAuth();
+  const { loading, refresh } = useAuth();
+  const [token] = useState(() =>
+    new URLSearchParams(window.location.search).get("token"),
+  );
+  useEffect(() => {
+    if (mode === "reset")
+      window.history.replaceState(window.history.state, "", "/auth/reset");
+  }, [mode]);
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const [sent, setSent] = useState(false);
   const [notice, setNotice] = useState("");
-  const [socialPending, setSocialPending] = useState(false);
   const {
     register,
     handleSubmit,
@@ -141,55 +142,33 @@ export function AuthPage({ mode }: { mode: Mode }) {
   const hasPassword = ["login", "signup", "reset"].includes(mode);
   const newPassword = mode === "signup" || mode === "reset";
   const submit = handleSubmit(async (fields) => {
-    if (!authClient || socialPending) return;
     setNotice("");
     try {
       const email = fields.email?.trim().toLowerCase();
       if (mode === "login") {
-        const { error } = await authClient.auth.signInWithPassword({
-          email,
-          password: fields.password,
-        });
-        if (error) throw error;
+        await authRequest("sign-in", { email, password: fields.password });
+        await refresh();
         navigate("/", { replace: true });
       } else if (mode === "signup") {
-        const { error, data } = await authClient.auth.signUp({
+        await authRequest("sign-up", {
           email,
           password: fields.password,
-          options: {
-            emailRedirectTo: callbackUrl(),
-            data: { display_name: fields.name.trim() },
-          },
+          displayName: fields.name.trim(),
         });
-        if (error) throw error;
-        if (data.session) navigate("/", { replace: true });
-        else setSent(true);
+        setSent(true);
       } else if (mode === "forgot") {
-        const { error } = await authClient.auth.resetPasswordForEmail(email, {
-          redirectTo: callbackUrl(),
-        });
-        if (error) throw error;
+        await authRequest("password/forgot", { email });
         setSent(true);
       } else if (mode === "resend") {
-        const { error } = await authClient.auth.resend({
-          type: "signup",
-          email,
-          options: { emailRedirectTo: callbackUrl() },
-        });
-        if (error) throw error;
+        await authRequest("email/verification", { email });
         setSent(true);
       } else {
-        const { error } = await authClient.auth.updateUser({
+        await authRequest("password/reset", {
+          token,
           password: fields.password,
         });
-        if (error) throw error;
-        // Revoke refresh tokens on other devices after a password reset.
-        const result = await authClient.auth.signOut({ scope: "global" });
-        setNotice(
-          result.error
-            ? "비밀번호를 변경했어요. 다른 기기의 로그아웃은 완료하지 못했어요."
-            : "비밀번호를 변경했어요. 새 비밀번호로 로그인해 주세요.",
-        );
+        await refresh();
+        setNotice("비밀번호를 변경했어요. 새 비밀번호로 로그인해 주세요.");
         setSent(true);
       }
     } catch (error) {
@@ -199,7 +178,7 @@ export function AuthPage({ mode }: { mode: Mode }) {
       resetField("confirm");
     }
   });
-  if (mode === "reset" && !loading && !session && !sent)
+  if (mode === "reset" && !token && !sent)
     return (
       <AuthLayout>
         <h2>변경 링크를 먼저 열어 주세요</h2>
@@ -229,8 +208,8 @@ export function AuthPage({ mode }: { mode: Mode }) {
           </p>
           {mode !== "reset" && (
             <p className="auth-hint">
-              이 브라우저에서 가장 최근에 받은 링크를 열어 주세요. 링크가
-              만료되면 다시 요청할 수 있어요.
+              이메일로 받은 확인 링크를 열어 주세요. 링크가 만료되면 다시 요청할
+              수 있어요.
             </p>
           )}
           <Link className="auth-submit" to="/auth/login">
@@ -263,30 +242,13 @@ export function AuthPage({ mode }: { mode: Mode }) {
           )}
           <h2>{copy[mode].title}</h2>
           <p className="auth-description">{copy[mode].description}</p>
-          {!authClient && (
-            <p role="alert" className="auth-error">
-              아직 로그인 연결을 준비하고 있어요. 잠시 후 다시 방문해 주세요.
-            </p>
-          )}
-          {(mode === "login" || mode === "signup") && (
-            <SocialLogin
-              disabled={isSubmitting}
-              onPendingChange={setSocialPending}
-            />
-          )}
+          {(mode === "login" || mode === "signup") && <SocialLogin />}
           <form
             onSubmit={(event) => {
               void submit(event);
             }}
           >
-            <fieldset
-              disabled={
-                isSubmitting ||
-                socialPending ||
-                !authClient ||
-                (mode === "reset" && loading)
-              }
-            >
+            <fieldset disabled={isSubmitting || (mode === "reset" && loading)}>
               {mode === "signup" && (
                 <label htmlFor="auth-name">
                   이름
@@ -459,71 +421,61 @@ export function AuthPage({ mode }: { mode: Mode }) {
   );
 }
 
-export function AuthCallback() {
-  const navigate = useNavigate();
-  const [{ code, callbackError }] = useState(() => {
-    const query = new URLSearchParams(window.location.search);
-    const fragment = new URLSearchParams(window.location.hash.slice(1));
-    return {
-      code: query.get("code"),
-      callbackError: query.get("error") ?? fragment.get("error"),
-    };
-  });
-  const [message, setMessage] = useState(() =>
-    callbackError === "access_denied"
-      ? "로그인이 취소되었어요. 원하시면 다시 시도해 주세요."
-      : callbackError
-        ? "로그인을 완료하지 못했어요. 잠시 후 다시 시도해 주세요."
-        : !authClient || !code
-          ? "링크가 만료되었거나 사용할 수 없어요. 로그인을 다시 시도하거나 메일을 다시 요청해 주세요."
-          : "",
+export function VerifyEmail() {
+  const [token] = useState(() =>
+    new URLSearchParams(window.location.search).get("token"),
   );
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState("");
   useEffect(() => {
-    let active = true;
-    // Remove codes/errors before rendering links or making subsequent navigations.
-    window.history.replaceState(window.history.state, "", "/auth/callback");
-    if (!code || !authClient || callbackError) return;
-    void exchangeCallback(code)
-      .then(({ recovery, error }) => {
-        if (!active) return;
-        if (error)
-          setMessage(
-            "인증을 완료하지 못했어요. 시작한 브라우저에서 로그인을 다시 시도하거나 가장 최근 확인 메일을 열어 주세요.",
-          );
-        else navigate(recovery ? "/auth/reset" : "/", { replace: true });
-      })
-      .catch(() => {
-        if (active)
-          setMessage(
-            "인증을 완료하지 못했어요. 연결을 확인하고 다시 시도해 주세요.",
-          );
-      });
-    return () => {
-      active = false;
-    };
-  }, [code, callbackError, navigate]);
+    window.history.replaceState(window.history.state, "", "/auth/verify");
+  }, []);
   return (
     <AuthLayout>
-      <span className="auth-mail-icon">
-        <Mail size={27} />
-      </span>
-      <h2>{message ? "인증을 확인해 주세요" : "인증을 완료하고 있어요"}</h2>
-      <p role={message ? "alert" : "status"}>
-        {message || "잠시만 기다려 주세요."}
-      </p>
-      {message && (
-        <>
-          <Link className="auth-submit" to="/auth/login">
-            로그인으로 돌아가기
-          </Link>
-          <Link className="auth-secondary" to="/auth/resend">
-            가입 확인 메일 다시 받기
-          </Link>
-          <Link className="auth-secondary" to="/auth/forgot">
-            비밀번호 변경 링크 다시 받기
-          </Link>
-        </>
+      <h2>{done ? "이메일 확인을 완료했어요" : "이메일을 확인해 주세요"}</h2>
+      <p>확인 후 내 계정으로 로그인할 수 있어요.</p>
+      {error && (
+        <p role="alert" className="auth-error">
+          {error}
+        </p>
       )}
+      {done ? (
+        <Link className="auth-submit" to="/auth/login">
+          로그인으로 돌아가기
+        </Link>
+      ) : (
+        <button
+          className="auth-submit"
+          disabled={busy || !token}
+          onClick={() => {
+            setBusy(true);
+            setError("");
+            void authRequest("email/verify", { token })
+              .then(() => setDone(true))
+              .catch((cause) => setError(authError(cause)))
+              .finally(() => setBusy(false));
+          }}
+        >
+          {busy ? "확인 중…" : "이메일 확인 완료하기"}
+        </button>
+      )}
+      {!token && !done && (
+        <p role="alert">링크가 만료되었거나 사용할 수 없어요.</p>
+      )}
+      <Link className="auth-secondary" to="/auth/resend">
+        가입 확인 메일 다시 받기
+      </Link>
+    </AuthLayout>
+  );
+}
+export function AuthCallback() {
+  return (
+    <AuthLayout>
+      <h2>로그인을 다시 시작해 주세요</h2>
+      <Link className="auth-submit" to="/auth/login">
+        로그인으로 돌아가기
+      </Link>
     </AuthLayout>
   );
 }

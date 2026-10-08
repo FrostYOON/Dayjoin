@@ -7,6 +7,9 @@ import {
 import { DatabaseService } from '../infrastructure/database/database.service.js';
 import { RedisService } from '../infrastructure/redis/redis.service.js';
 
+import { Public } from '@nestjs/authentication';
+
+@Public()
 @Controller('health')
 export class HealthController {
   constructor(

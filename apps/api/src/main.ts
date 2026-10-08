@@ -6,6 +6,10 @@ import { configureApp } from './configure-app.js';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   configureApp(app);
-  await app.listen(app.get(ConfigService).getOrThrow<number>('PORT'));
+  const config = app.get(ConfigService);
+  await app.listen(
+    config.getOrThrow<number>('PORT'),
+    config.get('NODE_ENV') === 'production' ? '0.0.0.0' : '127.0.0.1',
+  );
 }
 await bootstrap();

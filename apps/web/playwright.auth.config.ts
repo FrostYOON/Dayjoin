@@ -14,7 +14,13 @@ export default defineConfig({
       command: "pnpm --filter api start:prod",
       cwd: "../..",
       url: "http://127.0.0.1:3301/api/v1/health/live",
-      env: { PORT: "3301" },
+      env: {
+        PORT: "3301",
+        NODE_ENV: "test",
+        APP_URL: "http://127.0.0.1:4180",
+        DATABASE_URL:
+          "postgresql://dayjoin_app:local_app_only@127.0.0.1:15432/dayjoin_auth_test",
+      },
       reuseExistingServer: false,
     },
     {

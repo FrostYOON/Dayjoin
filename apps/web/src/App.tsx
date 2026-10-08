@@ -241,7 +241,7 @@ function App() {
             </div>
           </div>
           <div className="header-right">
-            {auth.session ? <button className="header-auth-link" onClick={() => setAccountOpen(true)}>내 계정</button>
+            {auth.user ? <button className="header-auth-link" onClick={() => setAccountOpen(true)}>내 계정</button>
               : <Link className="header-auth-link" to="/auth/login">로그인</Link>}
             <button
               className="profile-button"

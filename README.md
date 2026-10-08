@@ -2,7 +2,7 @@
 
 일정과 가계부를 한 캘린더에서 관리하고, 선택한 기록을 함께 보는 서비스.
 
-**현재 상태: React 통합 예시 화면 + 이메일 인증 + 소셜 로그인 연결 코드 / 2026-09-28.** Supabase Auth와 Nest 토큰 검증을 연결했다. 실제 가입·메일 확인·로그인 유지·복구는 로컬 인증 서버에서 검증한다. 일정·가계부는 여전히 메모리 예시 데이터이며 업무 영속 저장·공유/RLS·운영 배포는 미구현이다. [인증 구현·실행 기록](docs/25_EMAIL_AUTH.md)을 참고한다.
+**현재 상태: React 예시 화면 + Nest 공식 이메일 인증 / 2026-10-07.** 회원가입·이메일 확인·로그인·로그아웃·비밀번호 재설정을 Nest 공식 인증 모듈과 PostgreSQL로 구현했다. 구글·애플 로그인, 실제 SMTP 수신, 일정·가계부 서버 저장·공유 권한·운영 배포는 후속 작업이다. [현재 인증 구현과 실제 검증](docs/27_NEST_AUTH.md)을 따른다.
 
 사용자 확정 조건은 **한국 우선, 1인 개발, TypeScript·NestJS 사용 경험이 가장 많고 Python은 조금 사용, 프론트엔드 경험 없음, 주 약 10시간, 초기 비용 최소화, 장기 수익화, 세 서비스 독립 개발**이다. React + Vite / NestJS 및 공식 CLI 중심 개발은 확정이다. 호스팅·일정·가격은 추천안/추정치다.
 
@@ -26,7 +26,7 @@
 
 개발 시 [AGENTS.md](AGENTS.md)와 [공식 문서 기반 개발 기준](docs/08_ENGINEERING_STANDARD.md)을 먼저 따른다.
 
-Google·Apple 로그인은 SDK 연결과 화면을 구현했으며 실제 제공자 설정은 아직이다. 비활성 제공자는 준비 중으로 표시한다. [소셜 로그인 활성화와 인증 정책](docs/26_SOCIAL_AUTH.md)을 참고한다.
+구글·애플 로그인 버튼은 준비 중이다. 이전 Supabase 구현은 별도 브랜치/PR #6에 보존했으며 현재 브랜치의 실행 경로에서 제거했다.
 
 ## 실행 방법
 
@@ -41,8 +41,7 @@ pnpm install --frozen-lockfile
 cp -n apps/api/.env.example apps/api/.env
 pnpm db:generate
 pnpm infra:up
-pnpm auth:start
-pnpm auth:env
+pnpm db:migrate:deploy
 ```
 
 터미널 1:
@@ -57,8 +56,8 @@ pnpm dev:api
 pnpm dev:web
 ```
 
-Vite: http://localhost:5173 · API: http://localhost:3000/api/v1/health/ready.
-웹은 Dayjoin 달력·일정/가계부 등록·계좌/카드·월 합계를 제공한다. **웹 화면만 체험할 때는 설치 후 `pnpm dev:web`만 실행하면 된다.** API/Docker 없이 가상 데이터가 동작하며 새로고침하면 초기화된다. 상단 프로필에서 사용자 관점·화면 밝기·오류 상태를 비교할 수 있다. 화면 밝기는 기본적으로 시스템 설정을 따르며, 선택한 테마는 이 브라우저의 다음 방문에도 유지된다. 기록 데이터 저장과는 별도이며 [최신 테마·검증 기록](docs/20_THEME_AND_UI_CHECKPOINT.md)을 참고한다. 실제 로그인 계정은 별도 내 계정 화면에서 확인하며 `/api/v1/auth/me`를 호출한다. 가상 사용자 지우/하늘은 로그인 계정과 관계없는 체험용 인물이다. 가입 확인·복구 메일은 [개발용 메일함](http://127.0.0.1:55434)에서 확인한다.
+Vite: http://127.0.0.1:5173 · API: http://127.0.0.1:3000/api/v1/health/ready. 가입·로그인에는 APP_URL과 동일한 웹 주소를 사용한다.
+웹은 Dayjoin 달력·일정/가계부 등록·계좌/카드·월 합계를 제공한다. **웹 화면만 체험할 때는 설치 후 `pnpm dev:web`만 실행하면 된다.** API/Docker 없이 가상 데이터가 동작하며 새로고침하면 초기화된다. 상단 프로필에서 사용자 관점·화면 밝기·오류 상태를 비교할 수 있다. 화면 밝기는 기본적으로 시스템 설정을 따르며, 선택한 테마는 이 브라우저의 다음 방문에도 유지된다. 기록 데이터 저장과는 별도이며 [최신 테마·검증 기록](docs/20_THEME_AND_UI_CHECKPOINT.md)을 참고한다. 실제 로그인 계정은 별도 내 계정 화면에서 확인하며 `/api/v1/auth/me`를 호출한다. 가상 사용자 지우/하늘은 로그인 계정과 관계없는 체험용 인물이다. 개발용 확인·복구 메일은 apps/api/var/mail의 .eml 파일로 저장한다. 실제 수신함으로 보내려면 API에 SMTP_URL과 MAIL_FROM을 설정한다.
 
 Redis 연결도 확인하려면:
 
@@ -69,13 +68,13 @@ REDIS_ENABLED=true pnpm dev:api
 
 기존 API 프로세스를 먼저 종료한 다음 재실행한다. 기본값은 Redis 비활성화다.
 
-API까지 컨테이너로 실행하는 대안:
+production API 이미지 시작·health를 확인하려면:
 
 ```sh
 REDIS_ENABLED=true docker compose --profile cache --profile app up -d --build --wait
 ```
 
-이 경우 호스트의 dev:api는 동시에 실행하지 않는다(같은 3000 포트). 웹은 dev:web로 실행한다.
+이 경우 호스트의 dev:api는 동시에 실행하지 않는다(같은 3000 포트). Compose의 SMTP/HTTPS 값은 검사 전용 예시다. 실제 로컬 웹 가입 시험은 위의 dev:api/dev:web 명령을 사용한다.
 
 ## 검증·종료
 
@@ -84,20 +83,21 @@ pnpm db:validate
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm test:auth:setup
 pnpm test:e2e
 pnpm build
+pnpm test:auth
 pnpm infra:cache
 pnpm test:integration
 REDIS_ENABLED=true pnpm test:integration
 docker compose --profile cache --profile app config --quiet
 ```
 
-test는 API 환경 설정 단위 검사와 웹 금액·날짜·공개 표시 검사, test:e2e는 의존성을 대체한 HTTP 계약 검사, test:integration은 실제 DB/Redis와 빌드된 API를 실행한다. 통합 검사는 임시 3300 포트를 사용한다. 인증 브라우저 검사는 로컬 Auth와 DB를 시작한 뒤 `pnpm build && pnpm test:auth`로 실행한다. 권한/RLS/migration 검사는 아직 없다.
+test는 API 환경 설정과 웹 도메인 검사다. test:e2e는 별도 dayjoin_auth_test DB의 실제 인증 HTTP·공식 저장소 계약 검사와 health 계약 검사이며, test:auth:setup을 먼저 실행한다. test:auth는 빌드된 API와 Chromium으로 가입·확인·로그인·복구를 검증한다. test:integration은 실제 DB/Redis와 빌드된 API를 실행한다. 인증 저장소의 DB 역할 정책은 적용했으며 캘린더·가계부의 사용자별 공유/RLS는 후속이다.
 
 개발 서버는 해당 터미널에서 Ctrl+C, 컨테이너는 다음 명령으로 종료한다.
 
 ```sh
-pnpm auth:stop
 pnpm infra:down
 ```
 

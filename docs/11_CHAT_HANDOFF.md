@@ -1,5 +1,9 @@
 # Dayjoin 새 채팅 인계
 
+## 최신 인증 결정 · 2026-10-07
+
+사용자가 별도 인증 프레임워크 대신 Nest 공식 가이드로 구현하도록 요청했다. feature/nest-auth는 최신 origin/dev(6acc53b)에서 분기하고 기존 인증 화면을 재사용했다. @nestjs/authentication 0.0.1의 쿠키 세션·scrypt·메일 토큰을 Prisma/PostgreSQL에 연결한다. Supabase 브랜치/PR #6과 PWA PR #5, 네이티브 PR #4는 보존·미병합이다. 현재 구현·CLI·검증·한계는 [27_NEST_AUTH.md](27_NEST_AUTH.md)를 우선한다. 아래 날짜별 내용은 당시 기록이며 현재 완료 범위로 재사용하지 않는다.
+
 ## 최신 인증 작업 · 2026-09-27
 
 사용자 요청으로 이메일 회원가입·로그인·확인 메일·비밀번호 복구와 Nest 보호 API를 구현했다. Supabase Auth 로컬 서버/메일함을 사용하며 업무 데이터는 계속 예시다. 최신 실행법·실제 검증·미완료 범위는 [인증 기록](25_EMAIL_AUTH.md)과 [소셜 로그인 후속 기록](26_SOCIAL_AUTH.md)을 우선한다. 2026-09-28 Google·Apple 버튼/SDK/설정 조회를 추가했지만 실제 공급자 자격증명과 운영 SMTP는 미설정이다. `feature/email-auth`는 dev(6acc53b) 기반 독립 브랜치다. PWA PR #5는 별도 병합 승인 대기, 네이티브 PR #4는 보류하며 앱 작업을 자동 재개하지 않는다. 아래 과거 로그인 미구현 표기는 당시 이력이다.

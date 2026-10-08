@@ -1,11 +1,15 @@
 import { createContext, useContext } from "react";
-import type { Session } from "@supabase/supabase-js";
-export type Profile = { id: string; email: string; displayName: string };
+export type Profile = {
+  id: string;
+  email: string;
+  displayName: string;
+  emailVerified: boolean;
+};
 type AuthState = {
-  session: Session | null;
   user: Profile | null;
   loading: boolean;
   error: string;
+  refresh: () => Promise<void>;
   retry: () => void;
   logout: () => Promise<string | null>;
 };

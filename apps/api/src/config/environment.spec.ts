@@ -25,20 +25,25 @@ describe('environment validation', () => {
     );
   });
   it.each([
-    { SUPABASE_URL: 'https://dayjoin.example' },
-    { SUPABASE_PUBLISHABLE_KEY: 'public-key' },
-    {
-      SUPABASE_URL: 'http://remote.example',
-      SUPABASE_PUBLISHABLE_KEY: 'public-key',
-    },
-    {
-      SUPABASE_URL: 'https://user:secret@example.com',
-      SUPABASE_PUBLISHABLE_KEY: 'public-key',
-    },
+    { APP_URL: 'http://remote.example' },
+    { APP_URL: 'https://user:secret@example.com' },
+    { SMTP_URL: 'https://mail.example.com' },
+    { NODE_ENV: 'production' },
+    { NODE_ENV: 'production', APP_URL: 'https://dayjoin.example' },
   ])('rejects incomplete or unsafe Auth settings: %j', (settings) => {
     expect(() => validateEnvironment({ ...base, ...settings })).toThrow(
       'Invalid environment fields',
     );
+  });
+  it('requires production HTTPS and SMTP and normalizes origins', () => {
+    expect(
+      validateEnvironment({
+        ...base,
+        NODE_ENV: 'production',
+        APP_URL: 'https://dayjoin.example/',
+        SMTP_URL: 'smtps://smtp.example.com:465',
+      }).APP_URL,
+    ).toBe('https://dayjoin.example');
   });
   it('does not leak credentials into validation errors', () => {
     expect(() =>
